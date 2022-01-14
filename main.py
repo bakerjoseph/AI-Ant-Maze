@@ -25,5 +25,3 @@ class AntModel:
         self.currentPos = currentPos
         self.RNG = RNGSeed
 
-
-
