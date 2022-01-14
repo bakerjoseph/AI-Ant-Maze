@@ -94,7 +94,7 @@ class AntModel:
 # print(ant1.rotation)
 
 allAnts = []
-antLimit = 100
+antLimit = 10
 antIteration = 0
 
 while len(allAnts) < antLimit:
@@ -111,7 +111,7 @@ while True:
         allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
         antIteration += 1
-        time.sleep(0.02)
+        time.sleep((0.02 / antLimit))
         print("ants have moved")
 
     if antIteration >= antLimit:
