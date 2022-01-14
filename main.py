@@ -22,6 +22,11 @@ class Position:
 
         print(posString)
 
+    def setPosition(self, position):
+        self.x = position.x
+        self.y = position.y
+
+
 
 class Path:
     posList = []
@@ -38,18 +43,24 @@ class Path:
 
 
 class AntModel:
+
+
     currentPos = Position(0, 0)
     path = []
     objective = False
     rotation = 0.0
 
-    def __init__(self, position):
-        self.currentPos = position
+    antDraw = None
 
-    currentPath = Path(currentPos)
-    antDraw = Circle(Point(480, 240), 5)
-    antDraw.setFill('red')
-    antDraw.draw(win)
+    def __init__(self, position):
+
+        print("I am an ant")
+        self.currentPos.setPosition(position)
+        self.path = Path(self.currentPos)
+
+        self.antDraw = Circle(Point(self.currentPos.x, self.currentPos.y), 5)
+        self.antDraw.setFill('red')
+        self.antDraw.draw(win)
 
     def random_num_gen(self):
         a = random.random()
@@ -77,16 +88,34 @@ class AntModel:
         self.currentPos.movePosition(bside, aside)
 
 
-pos1 = Position(1920/4, 1080/4)
-ant1 = AntModel(pos1)
-ant1.currentPos.printPos()
-print(ant1.rotation)
+# pos1 = Position(1920/4, 1080/4)
+# ant1 = AntModel(pos1)
+# ant1.currentPos.printPos()
+# print(ant1.rotation)
 
+allAnts = []
+antLimit = 100
+antIteration = 0
+
+while len(allAnts) < antLimit:
+        posForAnt = Position(1920/4, 1080/4)
+        antObj = AntModel(posForAnt)
+        allAnts.append(antObj)
+        print("ant created")
+print("ant creation finished")
+
+print("simulation start")
 while True:
-    ant1.setRotation()
-    ant1.move()
-    time.sleep(0.02)
 
+    while antIteration < antLimit:
+        allAnts[antIteration].setRotation()
+        allAnts[antIteration].move()
+        antIteration += 1
+        time.sleep(0.02)
+        print("ants have moved")
+
+    if antIteration >= antLimit:
+        antIteration = 0
 
 
 ant1.currentPos.printPos()
