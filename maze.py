@@ -13,6 +13,15 @@
 #  5 [four way] - 50 four way connection
 import random
 
+#*Checklist for eventual graphics implementation and collision 
+
+#Add positional values into the tile class to be displayed later (should be scalable)
+
+#Add a "Wall" class which make up the 9 subdivisions of a maze section, each should have positional values (at: 0,0 0,1/3, 0,2/3
+#                                                                    from top left to bottom right ->       1/3,0 1/3,1/3, 1/3,2/3
+#                                                                                                           2/3,0 2/3,1/3, 2/3,2/3)
+
+#Add graphical stuff after
 
 class Tile:
     # Tile seperation pairs
