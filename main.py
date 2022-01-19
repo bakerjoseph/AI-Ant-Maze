@@ -1,11 +1,11 @@
 from abc import abstractmethod
 from logging.handlers import RotatingFileHandler
-import numpy as np
 import random
 import math as m
-
+from graphics import *
 from multiprocessing import Process, Queue
 
+win = GraphWin('Simulaton', 1920/2, 1080/2) # give title and dimensions
 
 class Position:
     def __init__(self, x, y):
@@ -20,6 +20,11 @@ class Position:
         posString = "(" + str(self.x) + ", " + str(self.y) + ")"
 
         print(posString)
+
+    def setPosition(self, position):
+        self.x = position.x
+        self.y = position.y
+
 
 
 class Path:
@@ -36,20 +41,34 @@ class Path:
         self.time += 1
 
 
+allAnts = []
+
 class AntModel:
+
+
     currentPos = Position(0, 0)
     path = []
     objective = False
     rotation = 0.0
 
-    def __init__(self, position):
-        self.currentPos = position
+    antDraw = None
 
-    currentPath = Path(currentPos)
+    def __init__(self, position):
+
+        print("I am an ant")
+        self.currentPos.setPosition(position)
+        self.path = Path(self.currentPos)
+
+        self.antDraw = Circle(Point(self.currentPos.x, self.currentPos.y), 5)
+        self.antDraw.setFill('red')
+        self.antDraw.draw(win)
+
+        allAnts.append(self)
 
     def random_num_gen(self):
         a = random.random()
-        a = (a*8) - 4
+        a = (a*40) - 20
+        # a = a*360
         print("random number generated " + str(a))
         return a
 
@@ -68,23 +87,42 @@ class AntModel:
         aside = cside * m.cos(m.radians(self.rotation))
         bside = cside * m.sin(m.radians(self.rotation))
 
+        self.antDraw.move(bside, aside)
         self.currentPos.movePosition(bside, aside)
 
 
-pos1 = Position(0, 0)
-ant1 = AntModel(pos1)
+# pos1 = Position(1920/4, 1080/4)
+# ant1 = AntModel(pos1)
+# ant1.currentPos.printPos()
+# print(ant1.rotation)
+
+antLimit = 5
+antIteration = 0
+
+while len(allAnts) < antLimit:
+        posForAnt = Position(1920/4, 1080/4)
+        antObj = AntModel(posForAnt)
+        print("ant created")
+print("ant creation finished")
+
+print("simulation start")
+while True:
+
+    while antIteration < antLimit:
+        allAnts[antIteration].setRotation()
+        allAnts[antIteration].move()
+        antIteration += 1
+        time.sleep((0.02 / antLimit))
+        print("ants have moved")
+
+    if antIteration >= antLimit:
+        antIteration = 0
+
+
 ant1.currentPos.printPos()
 print(ant1.rotation)
-i = 0
-while i < 100:
-    i += 1
-    ant1.setRotation()
-    ant1.move()
 
-print(i)
 
-ant1.currentPos.printPos()
-print(ant1.rotation)
 
 
 # class ACO:
