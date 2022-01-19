@@ -5,7 +5,8 @@ import math as m
 from graphics import *
 from multiprocessing import Process, Queue
 
-win = GraphWin('Simulaton', 1920/2, 1080/2) # give title and dimensions
+win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
+
 
 class Position:
     def __init__(self, x, y):
@@ -26,7 +27,6 @@ class Position:
         self.y = position.y
 
 
-
 class Path:
     posList = []
     time = 0.0
@@ -43,8 +43,8 @@ class Path:
 
 allAnts = []
 
-class AntModel:
 
+class AntModel:
 
     currentPos = Position(0, 0)
     path = []
@@ -62,7 +62,7 @@ class AntModel:
         self.antDraw = Circle(Point(self.currentPos.x, self.currentPos.y), 5)
         self.antDraw.setFill('red')
         self.antDraw.draw(win)
-
+        #saving ant object
         allAnts.append(self)
 
     def random_num_gen(self):
@@ -77,6 +77,7 @@ class AntModel:
         self.rotation = self.rotation + rotationDifference
         while self.rotation < 0:
             self.rotation += 360
+        #current direction
         self.rotation = self.rotation % 360
 
     def move(self):
@@ -90,6 +91,9 @@ class AntModel:
         self.antDraw.move(bside, aside)
         self.currentPos.movePosition(bside, aside)
 
+    def nextNode(self):
+        
+
 
 # pos1 = Position(1920/4, 1080/4)
 # ant1 = AntModel(pos1)
@@ -100,9 +104,9 @@ antLimit = 5
 antIteration = 0
 
 while len(allAnts) < antLimit:
-        posForAnt = Position(1920/4, 1080/4)
-        antObj = AntModel(posForAnt)
-        print("ant created")
+    posForAnt = Position(1920/4, 1080/4)
+    antObj = AntModel(posForAnt)
+    print("ant created")
 print("ant creation finished")
 
 print("simulation start")
@@ -112,6 +116,7 @@ while True:
         allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
         antIteration += 1
+        #
         time.sleep((0.02 / antLimit))
         print("ants have moved")
 
@@ -121,8 +126,6 @@ while True:
 
 ant1.currentPos.printPos()
 print(ant1.rotation)
-
-
 
 
 # class ACO:
