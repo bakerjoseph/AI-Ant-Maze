@@ -3,7 +3,6 @@ from logging.handlers import RotatingFileHandler
 import random
 import math as m
 from graphics import *
-
 from multiprocessing import Process, Queue
 
 win = GraphWin('Simulaton', 1920/2, 1080/2) # give title and dimensions
@@ -42,6 +41,8 @@ class Path:
         self.time += 1
 
 
+allAnts = []
+
 class AntModel:
 
 
@@ -61,6 +62,8 @@ class AntModel:
         self.antDraw = Circle(Point(self.currentPos.x, self.currentPos.y), 5)
         self.antDraw.setFill('red')
         self.antDraw.draw(win)
+
+        allAnts.append(self)
 
     def random_num_gen(self):
         a = random.random()
@@ -93,14 +96,12 @@ class AntModel:
 # ant1.currentPos.printPos()
 # print(ant1.rotation)
 
-allAnts = []
-antLimit = 10
+antLimit = 5
 antIteration = 0
 
 while len(allAnts) < antLimit:
         posForAnt = Position(1920/4, 1080/4)
         antObj = AntModel(posForAnt)
-        allAnts.append(antObj)
         print("ant created")
 print("ant creation finished")
 
