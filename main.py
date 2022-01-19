@@ -55,7 +55,7 @@ class AntModel:
 
     def __init__(self, position):
 
-        print("I am an ant")
+        #print("I am an ant")
         self.currentPos.setPosition(position)
         self.path = Path(self.currentPos)
 
@@ -69,7 +69,7 @@ class AntModel:
         a = random.random()
         a = (a*40) - 20
         # a = a*360
-        print("random number generated " + str(a))
+        #print("random number generated " + str(a))
         return a
 
     def setRotation(self):
@@ -96,24 +96,26 @@ class AntModel:
 # ant1.currentPos.printPos()
 # print(ant1.rotation)
 
-antLimit = 5
+antLimit = 500
 antIteration = 0
 
 while len(allAnts) < antLimit:
         posForAnt = Position(1920/4, 1080/4)
         antObj = AntModel(posForAnt)
-        print("ant created")
-print("ant creation finished")
+        #print("ant created")
+#print("ant creation finished")
 
-print("simulation start")
+#print("simulation start")
 while True:
+
+    r = random.random()
 
     while antIteration < antLimit:
         allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
         antIteration += 1
         time.sleep((0.02 / antLimit))
-        print("ants have moved")
+        #print("ants have moved")
 
     if antIteration >= antLimit:
         antIteration = 0
