@@ -13,22 +13,23 @@
 #  5 [four way] - 50 four way connection
 import random
 
-#*Checklist for eventual graphics implementation and collision 
+# *Checklist for eventual graphics implementation and collision
 
-#Add positional values into the tile class to be displayed later (should be scalable)
+# Add positional values into the tile class to be displayed later (should be scalable)
 
-#Add a "Wall" class which make up the 9 subdivisions of a maze section, each should have positional values (at: 0,0 0,1/3, 0,2/3
+# Add a "Wall" class which make up the 9 subdivisions of a maze section, each should have positional values (at: 0,0 0,1/3, 0,2/3
 #                                                                    from top left to bottom right ->       1/3,0 1/3,1/3, 1/3,2/3
 #                                                                                                           2/3,0 2/3,1/3, 2/3,2/3)
 
-#Add graphical stuff after
+# Add graphical stuff after
 
-class Tile:
-    # Tile seperation pairs
+
+class Section:
+    # Section seperation pairs
     pairedWalls = {'N': 'S', 'S': 'N', 'E': 'W', 'W': 'E'}
 
     def __init__(self, x, y):
-        # Initialize a tile at given (x, y), starts surrounded by walls
+        # Initialize a section at given (x, y), starts surrounded by walls
         self.x = x
         self.y = y
 
@@ -37,14 +38,14 @@ class Tile:
         self.goal = 'None'
 
     def hasAllWalls(self):
-        # Returns true if tile still has all it's walls
+        # Returns true if section still has all it's walls
         # False otherwise
         return all(self.walls.values())
 
     def removeWall(self, otherTile, wallPos):
-        # Removes the wall between the curent (self) tile and the other tile
+        # Removes the wall between the curent (self) section and the other section
         self.walls[wallPos] = False
-        otherTile.walls[Tile.pairedWalls[wallPos]] = False
+        otherTile.walls[Section.pairedWalls[wallPos]] = False
 
 
 class Maze:
@@ -58,8 +59,8 @@ class Maze:
         self.currentX = 0
         self.currentY = 0
 
-        # Create 2D array to represent a map of the maze (contains tiles)
-        self.mazeMap = [[Tile(x, y) for y in range(yHeight)]
+        # Create 2D array to represent a map of the maze (contains sections)
+        self.mazeMap = [[Section(x, y) for y in range(yHeight)]
                         for x in range(xLength)]
 
     def __str__(self):
@@ -70,21 +71,22 @@ class Maze:
             mazeRow = ['']
             for x in range(self.lengthX):
                 wallSections = [""]
-                currentTile = self.mazeMap[x][y]
-                if(currentTile.walls['N']):
+                currentSection = self.mazeMap[x][y]
+                if(currentSection.walls['N']):
                     wallSections.append("N")
-                if(currentTile.walls['E']):
+                if(currentSection.walls['E']):
                     wallSections.append("E")
-                if(currentTile.walls['S']):
+                if(currentSection.walls['S']):
                     wallSections.append("S")
-                if(currentTile.walls['W']):
+                if(currentSection.walls['W']):
                     wallSections.append("W")
-                mazeRow.append(self.tileWallsToPieceID(''.join(wallSections)))
-                if(currentTile.goal.__contains__("Start")):
-                    foundStart = currentTile.goal + \
+                mazeRow.append(self.sectionWallsToPieceID(
+                    ''.join(wallSections)))
+                if(currentSection.goal.__contains__("Start")):
+                    foundStart = currentSection.goal + \
                         " (" + str(x) + ", " + str(y) + ")"
-                if(currentTile.goal.__contains__("End")):
-                    foundEnd = currentTile.goal + \
+                if(currentSection.goal.__contains__("End")):
+                    foundEnd = currentSection.goal + \
                         " (" + str(x) + ", " + str(y) + ")"
             mazeRows.append(''.join(mazeRow))
         mazeRows.append(foundStart)
@@ -93,34 +95,34 @@ class Maze:
         return '\n'.join(mazeRows)
 
     def generateMaze(self):
-        totalTiles = self.lengthX * self.heightY
-        tileStack = []
-        currentTile = self.tileAt(self.currentX, self.currentY)
-        vistedTiles = 1
+        totalSections = self.lengthX * self.heightY
+        sectionStack = []
+        currentSection = self.sectionAt(self.currentX, self.currentY)
+        vistedSections = 1
         endFound = False
-        # Generate the maze by travelling through each tile starting at (0, 0)
-        currentTile.goal = "Start"
-        while vistedTiles < totalTiles:
-            neighbours = self.validNeighbours(currentTile)
-            # If there are no unvisted tiles return to previous tile
+        # Generate the maze by travelling through each section starting at (0, 0)
+        currentSection.goal = "Start"
+        while vistedSections < totalSections:
+            neighbours = self.validNeighbours(currentSection)
+            # If there are no unvisted sections return to previous section
             if not neighbours:
-                # Mark the first dead end tile
+                # Mark the first dead end section
                 if not endFound:
-                    currentTile.goal = "1st End"
+                    currentSection.goal = "1st End"
                     endFound = True
-                currentTile = tileStack.pop()
+                currentSection = sectionStack.pop()
                 continue
-            # Next tile is randomly picked
-            direction, nextTile = random.choice(neighbours)
-            currentTile.removeWall(nextTile, direction)
-            tileStack.append(currentTile)
-            currentTile = nextTile
-            vistedTiles += 1
+            # Next section is randomly picked
+            direction, nextSection = random.choice(neighbours)
+            currentSection.removeWall(nextSection, direction)
+            sectionStack.append(currentSection)
+            currentSection = nextSection
+            vistedSections += 1
 
-    def tileAt(self, x, y):
+    def sectionAt(self, x, y):
         return self.mazeMap[x][y]
 
-    def tileWallsToPieceID(self, walls):
+    def sectionWallsToPieceID(self, walls):
         # Given a set of walls, return what piece that would represent
         idValue = ' '
         if(walls == 'NESW'):
@@ -177,7 +179,7 @@ class Maze:
             # Greater than 0
             # Less than max length/height
             if (0 <= xFinal < self.lengthX) and (0 <= yFinal < self.heightY):
-                neighbour = self.tileAt(xFinal, yFinal)
+                neighbour = self.sectionAt(xFinal, yFinal)
                 # Check if we have been there before
                 # If not add it to the list
                 # Else skip it/do nothing
