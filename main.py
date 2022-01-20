@@ -37,19 +37,24 @@ class Path:
     def add_node(self, position):
         self.posList.append(position)
 
-    def time(self):
+    def incrementTime(self):
         self.time += 1
+
+    def getTime(self):
+        return self.time
 
 
 allAnts = []
+bestPath = Path(Position(0, 0))
 
 
 class AntModel:
 
     currentPos = Position(0, 0)
-    path = []
     objective = False
     rotation = 0.0
+    nextNode = 0
+    nearbyNodes = []
 
     antDraw = None
 
@@ -62,8 +67,10 @@ class AntModel:
         self.antDraw = Circle(Point(self.currentPos.x, self.currentPos.y), 5)
         self.antDraw.setFill('red')
         self.antDraw.draw(win)
-        #saving ant object
+        # saving ant object
         allAnts.append(self)
+
+    path = Path(currentPos)
 
     def random_num_gen(self):
         a = random.random()
@@ -77,7 +84,7 @@ class AntModel:
         self.rotation = self.rotation + rotationDifference
         while self.rotation < 0:
             self.rotation += 360
-        #current direction
+        # current direction
         self.rotation = self.rotation % 360
 
     def move(self):
@@ -91,15 +98,29 @@ class AntModel:
         self.antDraw.move(bside, aside)
         self.currentPos.movePosition(bside, aside)
 
-    def nextNode(self):
-        
+    def writeToPath(self):
+        self.path.add_node(self.currentPos)
 
+    def checkBestPath(self, bestPath):
+        if(bestPath.getTime() != 0 and bestPath.getTime() > self.path.getTime()):
+            bestPath = self.path
 
-# pos1 = Position(1920/4, 1080/4)
-# ant1 = AntModel(pos1)
-# ant1.currentPos.printPos()
-# print(ant1.rotation)
+    def getClosestNode(self, bestPath):
+        closestDistanceSqr = m.inf
+        closestNode = Position(0, 0)
+        for i in range(bestPath.size()):
+            xdis = self.currentPos.x - bestPath[i].x
+            ydis = self.currentPos.y - bestPath[i].y
+            totaldisSqr = (xdis * xdis) + (ydis * ydis)
+            if(totaldisSqr < closestDistanceSqr):
+                closestDistanceSqr = totaldisSqr
+                closestNode = bestPath[i]
+        return closestNode
 
+        # pos1 = Position(1920/4, 1080/4)
+        # ant1 = AntModel(pos1)
+        # ant1.currentPos.printPos()
+        # print(ant1.rotation)
 antLimit = 5
 antIteration = 0
 
@@ -113,6 +134,7 @@ print("simulation start")
 while True:
 
     while antIteration < antLimit:
+        allAnts[antIteration].writeToPath()
         allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
         antIteration += 1
@@ -122,10 +144,6 @@ while True:
 
     if antIteration >= antLimit:
         antIteration = 0
-
-
-ant1.currentPos.printPos()
-print(ant1.rotation)
 
 
 # class ACO:
