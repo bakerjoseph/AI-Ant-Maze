@@ -28,10 +28,10 @@ class Section:
     # Section seperation pairs
     pairedWalls = {'N': 'S', 'S': 'N', 'E': 'W', 'W': 'E'}
 
-    def __init__(self, x, y):
+    def __init__(self, col, row):
         # Initialize a section at given (x, y), starts surrounded by walls
-        self.x = x
-        self.y = y
+        self.column = col
+        self.row = row
 
         self.walls = {'N': True, 'E': True, 'S': True, 'W': True}
 
@@ -84,10 +84,11 @@ class Maze:
                     ''.join(wallSections)))
                 if(currentSection.goal.__contains__("Start")):
                     foundStart = currentSection.goal + \
-                        " (" + str(x) + ", " + str(y) + ")"
+                        " (" + str(y) + ", " + str(x) + ")"
                 if(currentSection.goal.__contains__("End")):
                     foundEnd = currentSection.goal + \
-                        " (" + str(x) + ", " + str(y) + ")"
+                        " (" + str(y) + ", " + str(x) + ")"
+
             mazeRows.append(''.join(mazeRow))
         mazeRows.append(foundStart)
         mazeRows.append(foundEnd)
@@ -165,7 +166,7 @@ class Maze:
 
         return idValue
 
-    def validNeighbours(self, tile):
+    def validNeighbours(self, section):
         # Required operation to go in a certain direction
         directionDisplacement = [('N', (0, -1)),
                                  ('E', (1, 0)),
@@ -173,8 +174,8 @@ class Maze:
                                  ('W', (-1, 0))]
         neighbours = []
         for direction, (xDirection, yDirection) in directionDisplacement:
-            xFinal = tile.x + xDirection
-            yFinal = tile.y + yDirection
+            xFinal = section.column + xDirection
+            yFinal = section.row + yDirection
             # A valid neighbour is identified if the final displacement is
             # Greater than 0
             # Less than max length/height
