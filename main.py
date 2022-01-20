@@ -1,10 +1,5 @@
+from position import Position
 
-
-
-class Position:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
 
 class Path:
     time = 0
@@ -24,6 +19,3 @@ class AntModel:
     def __init__(self, currentPos, RNGSeed):
         self.currentPos = currentPos
         self.RNG = RNGSeed
-
-
-

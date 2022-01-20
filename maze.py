@@ -12,6 +12,10 @@
 #  4 [three way] - 40 three way north to south branch east - 41 three way east to west branch to south - 42 three way south to north branch west - 43 three way west to east branch north
 #  5 [four way] - 50 four way connection
 import random
+from graphics import *
+from position import Position
+
+win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
 
 # *Checklist for eventual graphics implementation and collision
 
@@ -22,6 +26,31 @@ import random
 #                                                                                                           2/3,0 2/3,1/3, 2/3,2/3)
 
 # Add graphical stuff after
+
+wallFormations = {00: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                  10: [1, 2, 3, 7, 8, 9], 11: [1, 3, 4, 6, 7, 9],
+                  20: [1, 3, 4, 6, 7, 8, 9], 21: [1, 2, 3, 4, 7, 8, 9], 22: [1, 2, 3, 4, 6, 7, 9], 23: [1, 2, 3, 6, 7, 8, 9],
+                  30: [1, 3, 4, 7, 8, 9], 31: [1, 2, 3, 4, 7, 9], 32: [1, 2, 3, 6, 7, 9], 33: [1, 3, 6, 7, 8, 9],
+                  40: [1, 3, 4, 7, 9], 41: [1, 2, 3, 7, 9], 42: [1, 3, 6, 7, 9], 43: [1, 3, 7, 8, 9],
+                  50: [1, 3, 7, 9]}
+
+
+class Tile:
+    # Position in Maze
+    sectionPosition = Position(0, 0)
+    # Position in 2D space
+    position = Position(0, 0)
+    drawTile = None
+
+    def __init__(self, sectionX, sectionY, tileX, tileY):
+        self.sectionPosition.setPosition(Position(sectionX, sectionY))
+        self.position.setPosition(Position(tileX, tileY))
+
+    def drawThis(self, scaler):
+        self.drawTile = Rectangle(Point(scaler*(self.position.x), scaler*(self.position.y)), Point(
+            scaler*(self.position.x + 20), scaler*(self.position.y + 20)))
+        self.drawTile.setFill('blue')
+        self.drawTile.draw(win)
 
 
 class Section:
@@ -37,6 +66,8 @@ class Section:
 
         self.goal = 'None'
 
+        self.sectionID = 00
+
     def hasAllWalls(self):
         # Returns true if section still has all it's walls
         # False otherwise
@@ -46,6 +77,16 @@ class Section:
         # Removes the wall between the curent (self) section and the other section
         self.walls[wallPos] = False
         otherTile.walls[Section.pairedWalls[wallPos]] = False
+
+    def placeTiles(self):
+        test = Tile(0, 0, 100, 20)
+        test2 = Tile(0, 0, 200, 20)
+        test.drawThis(1)
+        test2.drawThis(1)
+
+
+testing = Section(0, 0)
+testing.placeTiles()
 
 
 class Maze:
@@ -196,4 +237,8 @@ length = 6
 # Maze Generation and display
 generatedMaze = Maze(height, length)
 generatedMaze.generateMaze()
-print(generatedMaze)
+# print(generatedMaze)
+
+inc = 0
+while(True):
+    inc = inc + 1
