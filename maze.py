@@ -80,8 +80,8 @@ class Section:
 
     def placeTiles(self):
         test = Tile(0, 0, 100, 20)
-        test2 = Tile(0, 0, 200, 20)
         test.drawThis(1)
+        test2 = Tile(1, 0, 120, 20)
         test2.drawThis(1)
 
 
