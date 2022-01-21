@@ -11,8 +11,10 @@
 #  3 [corner] - 30 corner north to east - 31 corner east to south - 32 corner south to west - 33 corner west to north
 #  4 [three way] - 40 three way north to south branch east - 41 three way east to west branch to south - 42 three way south to north branch west - 43 three way west to east branch north
 #  5 [four way] - 50 four way connection
+from colorsys import ONE_THIRD, TWO_THIRD
 import random
 from graphics import *
+
 from position import Position
 
 win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
@@ -48,7 +50,7 @@ class Tile:
 
     def drawThis(self, scaler):
         self.drawTile = Rectangle(Point(scaler*(self.position.x), scaler*(self.position.y)), Point(
-            scaler*(self.position.x + 20), scaler*(self.position.y + 20)))
+            scaler*(self.position.x + (ONE_THIRD * 100)), scaler*(self.position.y + (ONE_THIRD * 100))))
         self.drawTile.setFill('blue')
         self.drawTile.draw(win)
 
@@ -79,14 +81,55 @@ class Section:
         otherTile.walls[Section.pairedWalls[wallPos]] = False
 
     def placeTiles(self):
-        test = Tile(0, 0, 100, 20)
-        test.drawThis(1)
-        test2 = Tile(1, 0, 120, 20)
-        test2.drawThis(1)
+        tempID = 00
+        sequence = wallFormations[self.sectionID]
+        # First Row
+        if(sequence.__contains__(1)):
+            T1 = Tile(self.row, self.column,
+                      (ONE_THIRD * 100) + (self.row * 100), (ONE_THIRD * 100) + (self.column * 100))
+            T1.drawThis(1)
+        if(sequence.__contains__(2)):
+            T2 = Tile(self.row, self.column,
+                      (TWO_THIRD * 100) + (self.row * 100), (ONE_THIRD * 100) + (self.column * 100))
+            T2.drawThis(1)
+        if(sequence.__contains__(3)):
+            T3 = Tile(self.row, self.column,
+                      100 + (self.row * 100), (ONE_THIRD * 100) + (self.column * 100))
+            T3.drawThis(1)
+        # Second Row
+        if(sequence.__contains__(4)):
+            T4 = Tile(self.row, self.column, (ONE_THIRD * 100) +
+                      (self.row * 100), (TWO_THIRD * 100) + (self.column * 100))
+            T4.drawThis(1)
+        if(sequence.__contains__(5)):
+            T5 = Tile(self.row, self.column, (TWO_THIRD * 100) +
+                      (self.row * 100), (TWO_THIRD * 100) + (self.column * 100))
+            T5.drawThis(1)
+        if(sequence.__contains__(6)):
+            T6 = Tile(self.row, self.column, 100 + (self.row * 100),
+                      (TWO_THIRD * 100) + (self.column * 100))
+            T6.drawThis(1)
+        # Thrid Row
+        if(sequence.__contains__(7)):
+            T7 = Tile(self.row, self.column, (ONE_THIRD * 100) +
+                      (self.row * 100), 100 + (self.column * 100))
+            T7.drawThis(1)
+        if(sequence.__contains__(8)):
+            T8 = Tile(self.row, self.column, (TWO_THIRD * 100) +
+                      (self.row * 100), 100 + (self.column * 100))
+            T8.drawThis(1)
+        if(sequence.__contains__(9)):
+            T9 = Tile(self.row, self.column, 100 +
+                      (self.row * 100), 100 + (self.column * 100))
+            T9.drawThis(1)
 
 
 testing = Section(0, 0)
 testing.placeTiles()
+testing2 = Section(0, 1)
+testing2.placeTiles()
+testing3 = Section(1, 0)
+testing3.placeTiles()
 
 
 class Maze:
@@ -239,6 +282,6 @@ generatedMaze = Maze(height, length)
 generatedMaze.generateMaze()
 # print(generatedMaze)
 
-inc = 0
-while(True):
-    inc = inc + 1
+window = True
+while(window):
+    if(keyboard)
