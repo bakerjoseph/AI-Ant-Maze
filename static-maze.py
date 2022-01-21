@@ -110,7 +110,7 @@ class Section:
                 section = section[0]
         except:
             #normal variable
-            print("skip")
+            a=0
 
         for t in wallFormations[section]:
             if(t == 1):
