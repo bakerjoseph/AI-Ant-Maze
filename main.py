@@ -4,6 +4,7 @@ import random
 import math as m
 from graphics import *
 from multiprocessing import Process, Queue
+from maze import Maze
 
 win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
 
@@ -30,12 +31,14 @@ class Position:
 class Path:
     posList = []
     time = 0.0
+    nodeNum = 0
 
     def __init__(self, position):
-        self.posList = [position]
+        self.posList = [(position, self.nodeNum)]
 
     def add_node(self, position):
-        self.posList.append(position)
+        self.posList.append((position, self.nodeNum))
+        self.nodeNum += 1
 
     def incrementTime(self):
         self.time += 1
@@ -105,22 +108,26 @@ class AntModel:
         if(bestPath.getTime() != 0 and bestPath.getTime() > self.path.getTime()):
             bestPath = self.path
 
-    def getClosestNode(self, bestPath):
-        closestDistanceSqr = m.inf
-        closestNode = Position(0, 0)
+    def getNextNode(self, bestPath, nextNode):
+        closestNodesList = []
         for i in range(bestPath.size()):
             xdis = self.currentPos.x - bestPath[i].x
             ydis = self.currentPos.y - bestPath[i].y
             totaldisSqr = (xdis * xdis) + (ydis * ydis)
-            if(totaldisSqr < closestDistanceSqr):
-                closestDistanceSqr = totaldisSqr
-                closestNode = bestPath[i]
-        return closestNode
+            if(m.sqrt(totaldisSqr) < 5 and nextNode <= i):
+                closestNodesList.append(bestPath[i])
+                nextNode = closestNodesList[closestNodesList.size() - 1][1] + 1
+        return nextNode
 
-        # pos1 = Position(1920/4, 1080/4)
-        # ant1 = AntModel(pos1)
-        # ant1.currentPos.printPos()
-        # print(ant1.rotation)
+    def calcAntBias(self):
+        self.nextNode
+        xdis = self.currentPos.x - self.nextNode[0].x
+        ydis = self.currentPos.y - self.nextNode[0].y
+        result = m.atan2(ydis, xdis) * 180/m.pi
+        # totaldisSqr = (xdis * xdis) + (ydis * ydis)
+        # totaldis = m.sqrt(totaldisSqr)
+
+
 antLimit = 5
 antIteration = 0
 
