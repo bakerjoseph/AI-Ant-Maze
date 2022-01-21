@@ -19,6 +19,8 @@ from position import Position
 win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
 scaler = 1  # Global scaler
 
+allTiles = []
+
 # *Checklist for eventual graphics implementation and collision
 
 # Add positional values into the tile class to be displayed later (should be scalable)
@@ -92,6 +94,7 @@ class Section:
                     T = Tile(self.row, self.column, (operations[col] + (
                         self.row * 100)), (operations[row] + (self.column * 100)))
                     T.drawThis(scaler)
+                    allTiles.append(T)
                 count = count + 1
 
 
