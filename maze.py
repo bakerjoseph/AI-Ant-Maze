@@ -11,7 +11,6 @@
 #  3 [corner] - 30 corner north to east - 31 corner east to south - 32 corner south to west - 33 corner west to north
 #  4 [three way] - 40 three way north to south branch east - 41 three way east to west branch to south - 42 three way south to north branch west - 43 three way west to east branch north
 #  5 [four way] - 50 four way connection
-from colorsys import ONE_THIRD, TWO_THIRD
 import random
 from graphics import *
 from position import Position
@@ -19,17 +18,7 @@ from position import Position
 win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
 scaler = 1  # Global scaler
 
-allTiles = []
-
-# *Checklist for eventual graphics implementation and collision
-
-# Add positional values into the tile class to be displayed later (should be scalable)
-
-# Add a "Wall" class which make up the 9 subdivisions of a maze section, each should have positional values (at: 0,0 0,1/3, 0,2/3
-#                                                                    from top left to bottom right ->       1/3,0 1/3,1/3, 1/3,2/3
-#                                                                                                           2/3,0 2/3,1/3, 2/3,2/3)
-
-# Add graphical stuff after
+allTiles = []  # Global list of tile objects that are currently rendered
 
 wallFormations = {00: [1, 2, 3, 4, 5, 6, 7, 8, 9],
                   10: [1, 2, 3, 7, 8, 9], 11: [1, 3, 4, 6, 7, 9],
@@ -50,9 +39,12 @@ class Tile:
         self.sectionPosition.setPosition(Position(sectionX, sectionY))
         self.position.setPosition(Position(tileX, tileY))
 
+    def obtainPosition(self):
+        return self.position
+
     def drawThis(self, scale):
         self.drawTile = Rectangle(Point(scale*(self.position.x), scale*(self.position.y)), Point(
-            scale*(self.position.x + (ONE_THIRD * 100)), scale*(self.position.y + (ONE_THIRD * 100))))
+            scale*(self.position.x + (100/3)), scale*(self.position.y + (100/3))))
         self.drawTile.setFill('blue')
         self.drawTile.draw(win)
 
