@@ -91,6 +91,8 @@ class Section:
 
 
 class Maze:
+    # List of deadends
+    deadends = []
 
     def __init__(self, yLength, xHeight):
         # Size of defined maze height (y) by length (x)
@@ -113,7 +115,7 @@ class Maze:
             mazeRow = ['']
             for y in range(self.lengthY):
                 wallSections = [""]
-                currentSection = self.mazeMap[x][y]
+                currentSection = self.sectionAt(x, y)
                 if(currentSection.walls['N']):
                     wallSections.append("N")
                 if(currentSection.walls['E']):
@@ -140,7 +142,7 @@ class Maze:
     def renderMaze(self):
         for x in range(self.heightX):
             for y in range(self.lengthY):
-                currentSection = self.mazeMap[x][y]
+                currentSection = self.sectionAt(x, y)
                 currentSection.placeTiles()
 
     def generateMaze(self):
@@ -150,15 +152,10 @@ class Maze:
         vistedSections = 1
         endFound = False
         # Generate the maze by travelling through each section starting at (0, 0)
-        currentSection.goal = "Start"
         while vistedSections < totalSections:
             neighbours = self.validNeighbours(currentSection)
             # If there are no unvisted sections return to previous section
             if not neighbours:
-                # Mark the first dead end section
-                if not endFound:
-                    currentSection.goal = "1st End"
-                    endFound = True
                 currentSection = sectionStack.pop()
                 continue
             # Next section is randomly picked
@@ -169,6 +166,8 @@ class Maze:
             vistedSections += 1
         # Assign section IDs
         self.assignSectionID()
+        # Declare start and end points
+        self.declareSpecialArea()
 
     def sectionAt(self, x, y):
         return self.mazeMap[x][y]
@@ -177,7 +176,7 @@ class Maze:
         for x in range(self.heightX):
             for y in range(self.lengthY):
                 wallSections = [""]
-                currentSection = self.mazeMap[x][y]
+                currentSection = self.sectionAt(x, y)
                 if(currentSection.walls['N']):
                     wallSections.append("N")
                 if(currentSection.walls['E']):
@@ -188,6 +187,10 @@ class Maze:
                     wallSections.append("W")
                 currentSection.sectionID = self.sectionWallsToPieceID(
                     ''.join(wallSections))
+                # Check if currentSection.sectionID starts with 2
+                # If it does, it is a deadend, add it to the list of them
+                if(currentSection.sectionID.startswith('2')):
+                    self.deadends.append(currentSection)
 
     def sectionWallsToPieceID(self, walls):
         # Given a set of walls, return what piece that would represent
@@ -231,6 +234,17 @@ class Maze:
             idValue = "99"
 
         return idValue
+
+    def declareSpecialArea(self):
+        # Scramble deadends list
+        random.shuffle(self.deadends)
+        # Randomly grab two indexs and assign start and end goal
+        start = random.randrange(len(self.deadends))
+        self.deadends[start].goal = "Start"
+        self.deadends.pop(start)
+        end = random.randrange(len(self.deadends))
+        self.deadends[end].goal = "End"
+        pass
 
     def validNeighbours(self, section):
         # Required operation to go in a certain direction
