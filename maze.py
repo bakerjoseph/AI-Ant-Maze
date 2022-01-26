@@ -244,7 +244,6 @@ class Maze:
         self.deadends.pop(start)
         end = random.randrange(len(self.deadends))
         self.deadends[end].goal = "End"
-        pass
 
     def validNeighbours(self, section):
         # Required operation to go in a certain direction
