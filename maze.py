@@ -42,10 +42,10 @@ class Tile:
     def obtainPosition(self):
         return self.position
 
-    def drawThis(self, scale):
+    def drawThis(self, scale, color):
         self.drawTile = Rectangle(Point(scale*(self.position.x), scale*(self.position.y)), Point(
             scale*(self.position.x + (100/3)), scale*(self.position.y + (100/3))))
-        self.drawTile.setFill('blue')
+        self.drawTile.setFill(color)
         self.drawTile.draw(win)
 
 
@@ -82,10 +82,17 @@ class Section:
         # If the sequence contains the count
         for col in range(operations.__len__()):
             for row in range(operations.__len__()):
+                # Is start or end render the tile as green or red respectively
+                if(count == 5 and (self.goal.__contains__("Start") or self.goal.__contains__("End"))):
+                    T = Tile(self.row, self.column, (operations[col] + (
+                        self.row * 100)), (operations[row] + (self.column * 100)))
+                    T.drawThis(scaler, 'green' if self.goal.__contains__(
+                        "Start") else 'red')
+                # If the sequence contains the current number in count, render that wall tile
                 if(sequence.__contains__(count)):
                     T = Tile(self.row, self.column, (operations[col] + (
                         self.row * 100)), (operations[row] + (self.column * 100)))
-                    T.drawThis(scaler)
+                    T.drawThis(scaler, 'blue')
                     allTiles.append(T)
                 count = count + 1
 
@@ -93,6 +100,8 @@ class Section:
 class Maze:
     # List of deadends
     deadends = []
+    # List of special areas
+    specialAreas = []
 
     def __init__(self, yLength, xHeight):
         # Size of defined maze height (y) by length (x)
@@ -140,6 +149,7 @@ class Maze:
         return '\n'.join(mazeRows)
 
     def renderMaze(self):
+        # Iterate through each section and render it's tiles
         for x in range(self.heightX):
             for y in range(self.lengthY):
                 currentSection = self.sectionAt(x, y)
@@ -241,9 +251,11 @@ class Maze:
         # Randomly grab two indexs and assign start and end goal
         start = random.randrange(len(self.deadends))
         self.deadends[start].goal = "Start"
+        self.specialAreas.append(self.deadends[start])
         self.deadends.pop(start)
         end = random.randrange(len(self.deadends))
         self.deadends[end].goal = "End"
+        self.specialAreas.append(self.deadends[end])
 
     def validNeighbours(self, section):
         # Required operation to go in a certain direction
@@ -266,6 +278,16 @@ class Maze:
                 if neighbour.hasAllWalls():
                     neighbours.append((direction, neighbour))
         return neighbours
+
+    def startPosition(self):
+        # Return start special area Position object
+        startSection = self.specialAreas[0]
+        return Position(startSection.column, startSection.row)
+
+    def endPosition(self):
+        # Return end special area Position object
+        endSection = self.specialAreas[1]
+        return Position(endSection.column, endSection.row)
 
 
 # Size Definition of the maze
