@@ -93,6 +93,8 @@ class Section:
 class Maze:
     # List of deadends
     deadends = []
+    # List of special areas
+    specialAreas = []
 
     def __init__(self, yLength, xHeight):
         # Size of defined maze height (y) by length (x)
@@ -241,9 +243,11 @@ class Maze:
         # Randomly grab two indexs and assign start and end goal
         start = random.randrange(len(self.deadends))
         self.deadends[start].goal = "Start"
+        self.specialAreas.append(self.deadends[start])
         self.deadends.pop(start)
         end = random.randrange(len(self.deadends))
         self.deadends[end].goal = "End"
+        self.specialAreas.append(self.deadends[end])
 
     def validNeighbours(self, section):
         # Required operation to go in a certain direction
@@ -266,6 +270,14 @@ class Maze:
                 if neighbour.hasAllWalls():
                     neighbours.append((direction, neighbour))
         return neighbours
+
+    def startPosition(self):
+        startSection = self.specialAreas[0]
+        return Position(startSection.column, startSection.row)
+
+    def endPosition(self):
+        endSection = self.specialAreas[1]
+        return Position(endSection.column, endSection.row)
 
 
 # Size Definition of the maze
