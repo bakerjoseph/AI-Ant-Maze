@@ -34,10 +34,13 @@ wallFormations = {00: [1, 2, 3, 4, 5, 6, 7, 8, 9],
                   50: [1, 3, 7, 9]}
 win = GraphWin('Simulaton', 1920/2, 1080/2)
 
+
+#Set Both the Start and the end point special areas
 currentMaze [0][0] = [currentMaze[0][0],"start"]
 deadends = []
 row = 0
 column = 0
+#Iterate through the maze to find all the end points
 for r in currentMaze:
     row += 1
     for c in r:
@@ -45,7 +48,6 @@ for r in currentMaze:
         if(c == 20 or c == 21 or c == 22 or c == 23):
             deadends.insert(row, [row,column])
     column = 0
-
 
 endnum = randrange(len(deadends))
 end = deadends[endnum]
