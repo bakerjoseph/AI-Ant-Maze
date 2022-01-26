@@ -1,7 +1,8 @@
-import position
+# import position
 import math as m
-from graphics import *
-import random
+# from graphics import *
+# import random
+from maze import *
 
 class Path:
     posList = []
@@ -21,14 +22,22 @@ allAnts = []
 
 class AntModel:
 
-    currentPos = position.Position(0, 0)
+    sumOfSections = 0
+    currentPos = Position(0, 0)
     path = []
     objective = False
     rotation = 0.0
+    allTiles = []
 
     antDraw = None
+    win = None
 
-    def __init__(self, position, win):
+    def __init__(self, position, window, allTiles, sumOfSections):
+
+        self.sumOfSections = sumOfSections
+
+        self.allTiles = allTiles
+        self.win = window
 
         #print("I am an ant")
         self.currentPos.setPosition(position)
@@ -36,7 +45,7 @@ class AntModel:
 
         self.antDraw = Circle(Point(self.currentPos.x, self.currentPos.y), 5)
         self.antDraw.setFill('red')
-        self.antDraw.draw(win)
+        self.antDraw.draw(self.win)
 
         allAnts.append(self)
 
@@ -55,6 +64,7 @@ class AntModel:
         self.rotation = self.rotation % 360
 
     def move(self):
+
         aside = None
         bside = None
         cside = 1
@@ -62,5 +72,34 @@ class AntModel:
         aside = cside * m.cos(m.radians(self.rotation))
         bside = cside * m.sin(m.radians(self.rotation))
 
-        self.antDraw.move(bside, aside)
-        self.currentPos.movePosition(bside, aside)
+        # print(self.currentPos.y+aside)
+
+        collisionNode = Position(self.currentPos.x+bside, self.currentPos.y+aside)
+        shouldMove = True
+        # collisionDraw = None
+
+        # collisionDraw = Circle(Point(collisionNode.x, collisionNode.y), 3)
+        # collisionDraw.setFill('purple')
+        # collisionDraw.draw(self.win)
+
+        print(len(allTiles))
+
+        currentSegment = (m.floor(scale*(self.currentPos.x/100)),m.floor(scale*(self.currentPos.y/100)))
+        print(currentSegment)
+        time.sleep(20)
+        
+        i2=0
+        while i2 < 9:
+            print("----------------------------------")
+            allTiles[i2].printPosition()
+
+            if collisionNode.Colliding(allTiles[i2]):
+                shouldMove = False
+                i2=9999
+            i2+=1
+            
+        if shouldMove == True:
+            self.antDraw.move(bside, aside)
+            self.currentPos.movePosition(bside, aside)
+            
+            # print(allTiles[i].position.x)

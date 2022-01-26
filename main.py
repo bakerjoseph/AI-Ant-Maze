@@ -1,34 +1,48 @@
-from abc import abstractmethod
-from logging.handlers import RotatingFileHandler
-import random
-import math as m
-from graphics import *
-from multiprocessing import Process, Queue
+# from abc import abstractmethod
+# from logging.handlers import RotatingFileHandler
+
+# import random
+# import math as m
+# from graphics import *
+# from multiprocessing import Process, Queue
 from ant import *
-from position import *
+# from position import *
+from maze import *
 
 win = GraphWin('Simulaton', 1920/2, 1080/2) # give title and dimensions
+
+# Size Definition of the maze
+height = 5
+length = 9
+sumOfSections = height * length
+
+# Maze Generation and display
+generatedMaze = Maze(length, height, win)
+generatedMaze.generateMaze()
+print(generatedMaze)
+generatedMaze.renderMaze()
 
 antLimit = 5
 antIteration = 0
 
+
 while len(allAnts) < antLimit:
         posForAnt = Position(1920/4, 1080/4)
-        antObj = AntModel(posForAnt, win)
+        antObj = AntModel(posForAnt, win, allTiles, sumOfSections)
         #print("ant created")
 #print("ant creation finished")
 
 #print("simulation start")
 while True:
 
-    r = random.random()
+    # r = random.random()
 
     while antIteration < antLimit:
         allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
         antIteration += 1
-        time.sleep((0.02 / antLimit))
-        #print("ants have moved")
+        time.sleep((0.02 / (antLimit*10)))
+        # allAnts[antIteration - 1].currentPos.printPos()
 
     if antIteration >= antLimit:
         antIteration = 0
