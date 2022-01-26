@@ -51,6 +51,10 @@ allAnts = []
 bestPath = Path(Position(0, 0))
 
 
+def getBestPath():
+    return bestPath
+
+
 class AntModel:
 
     currentPos = Position(0, 0)
@@ -100,15 +104,17 @@ class AntModel:
 
         self.antDraw.move(bside, aside)
         self.currentPos.movePosition(bside, aside)
+        # self.checkIfEnd(Maze.)
 
     def writeToPath(self):
         self.path.add_node(self.currentPos)
 
-    def checkBestPath(self, bestPath):
-        if(bestPath.getTime() != 0 and bestPath.getTime() > self.path.getTime()):
+    def checkBestPath(self):
+        bestPath = getBestPath()
+        if(bestPath != 0 and bestPath.getTime() > self.path.getTime()):
             bestPath = self.path
 
-    def getNextNode(self, bestPath, nextNode):
+    def getNextNode(self, nextNode):
         closestNodesList = []
         for i in range(bestPath.size()):
             xdis = self.currentPos.x - bestPath[i].x
@@ -126,6 +132,16 @@ class AntModel:
         result = m.atan2(ydis, xdis) * 180/m.pi
         # totaldisSqr = (xdis * xdis) + (ydis * ydis)
         # totaldis = m.sqrt(totaldisSqr)
+
+    def checkIfEnd(self, endPos):
+        self.currentSegment
+        currentSegment = (m.floor(Maze.scale(self.currentPos.x/100)),
+                          m.floor(Maze.scale(self.currentPos.y/100)))
+        if (endPos.x == currentSegment[0] and endPos.y == currentSegment[1]):
+            self.checkBestPath()
+            return True
+        else:
+            return False
 
 
 antLimit = 5
