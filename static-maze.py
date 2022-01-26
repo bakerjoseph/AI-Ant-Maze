@@ -110,9 +110,13 @@ class Section:
                 section = section[0]
         except:
             #normal variable
+            #do nothing
             a=0
 
         for t in wallFormations[section]:
+            #Paints sections blue for walls
+            #Paints sections red for start
+            #Paints sections green for end
             if(t == 1):
                 draw = Tile(0, 0, (1+x)*tilesize, (1+y)*tilesize)
                 draw.drawThis(1, "blue")
@@ -150,9 +154,8 @@ class Section:
             elif(t == 9):
                 draw = Tile(0, 0, (3+x)*tilesize, (3+y)*tilesize)
                 draw.drawThis(1,'blue')
-            #test = Tile(0, 0, t*20, 0)
-            #test.drawThis(1)
 
+#iterates through every Tile and places the sections in the tile
 tileX = 0
 tileY = 0
 for tile in currentMaze:
@@ -163,13 +166,8 @@ for tile in currentMaze:
     tileX = 0
     tileY += 3
 tileY = 0 
-#testing = Section(0,0)
-#testing.placeTiles(m1[0],m1[0][1])
 
-#m1 = Static_Maze(len(m1),len(m1[0]))
-
-# Second Maze
-
+#Prints for Testing
 for r in m1:
     for c in r:
         print(c,end = " ")
