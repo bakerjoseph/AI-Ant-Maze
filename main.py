@@ -9,25 +9,6 @@ from maze import *
 win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
 
 
-class Position:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def movePosition(self, xmove, ymove):
-        self.x = self.x + xmove
-        self.y = self.y + ymove
-
-    def printPos(self):
-        posString = "(" + str(self.x) + ", " + str(self.y) + ")"
-
-        print(posString)
-
-    def setPosition(self, position):
-        self.x = position.x
-        self.y = position.y
-
-
 class Path:
     posList = []
     time = 0.0
@@ -59,7 +40,7 @@ def getBestPath():
 class AntModel:
 
     currentPos = Position(0, 0)
-    rotation = 0.0
+    rotation = 180
     nextNode = 0
     nearbyNodes = []
 
@@ -83,7 +64,7 @@ class AntModel:
         a = random.random()
         a = (a*40) - 20
         # a = a*360
-        print("random number generated " + str(a))
+        #print("random number generated " + str(a))
         return a
 
     def setRotation(self):
@@ -105,7 +86,7 @@ class AntModel:
         self.antDraw.move(bside, aside)
         self.currentPos.movePosition(bside, aside)
         # Checks if the ant has reached the end special area
-        self.checkIfEnd(Maze.endPosition())
+        self.checkIfEnd(generatedMaze.endPosition())
         if(objectiveFound == True):
             self.getNextNode()
             # Needs to return something
@@ -140,11 +121,13 @@ class AntModel:
         # totaldis = m.sqrt(totaldisSqr)
 
     def checkIfEnd(self, endPos):
-        self.currentSegment = (m.floor(Maze.scale*((self.currentPos.x-100/3)/100)),
-                               (m.floor(Maze.scale*((self.currentPos.y-100/3)/100))))
-        print("Checked for end")
+        self.currentSegment = (m.floor(scale*((self.currentPos.x-100/3)/100)),
+                               (m.floor(scale*((self.currentPos.y-100/3)/100))))
         # must compare center tile
-        if (endPos.x == self.currentSegment[1] and endPos.y == self.currentSegment[0]):
+        print(str(endPos.x) + " " + str(endPos.y))
+
+        if ((endPos.x - 50/3) < self.currentPos.x and (endPos.x + 50/3) > self.currentPos.x and (endPos.y - 50/3) < self.currentPos.y and (endPos.y + 50/3) > self.currentPos.y):
+            print("An ant has reached the end")
             self.checkBestPath()
             return True
         else:
@@ -160,13 +143,13 @@ generatedMaze.generateMaze()
 print(generatedMaze)
 generatedMaze.renderMaze()
 
-antLimit = 5
+antLimit = 1
 antIteration = 0
 
 while len(allAnts) < antLimit:
     #posForAnt = Position(1920/4, 1080/4)
-    startPos = Position(Maze.startPosition.x + (random.random() * 60 - 30),
-                        Maze.startPosition.y + (random.random() * 60 - 30))
+    startPos = Position(generatedMaze.startPosition().x + (random.random() * 30 - 15),
+                        generatedMaze.startPosition().y + (random.random() * 30 - 15))
     posForAnt = startPos
     antObj = AntModel(posForAnt)
     print("ant created")
@@ -177,13 +160,15 @@ print("ant creation finished")
 print("simulation start")
 while True:
 
+    # time.sleep(1000)
+
     while antIteration < antLimit:
         allAnts[antIteration].writeToPath()
-        allAnts[antIteration].setRotation()
+        # allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
         antIteration += 1
         time.sleep((0.02 / antLimit))
-        print("ants have moved")
+        #print("ants have moved")
 
     if antIteration >= antLimit:
         antIteration = 0
