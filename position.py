@@ -29,7 +29,7 @@ class Position:
         tileRangeStart = [scale*(tilePos.position.x), scale*(tilePos.position.y)] 
         tileRangeEnd = [scale*(tilePos.position.x + (100/3)), scale*(tilePos.position.y + (100/3))]
 
-        print(str(posX) + " " + str(posY) + "\n" + str(tileRangeStart) + " " + str(tileRangeEnd))
+        # print(str(posX) + " " + str(posY) + "\n" + str(tileRangeStart) + " " + str(tileRangeEnd))
         # time.sleep(2)
 
         if (posX >= tileRangeStart[0] and posX <= tileRangeEnd[0] and posY >= tileRangeStart[1] and posY <= tileRangeEnd[1]):

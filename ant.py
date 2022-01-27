@@ -22,8 +22,6 @@ allAnts = []
 
 class AntModel:
 
-    sumOfSections = 0
-    currentPos = Position(0, 0)
     path = []
     objective = False
     rotation = 0.0
@@ -33,6 +31,9 @@ class AntModel:
     win = None
 
     def __init__(self, position, window, allTiles, sumOfSections):
+
+        self.colliding = True
+        self.currentPos = (Position(0,0))
 
         self.sumOfSections = sumOfSections
 
@@ -65,6 +66,8 @@ class AntModel:
 
     def move(self):
 
+        self.colliding = False
+
         aside = None
         bside = None
         cside = 1
@@ -74,7 +77,7 @@ class AntModel:
 
         # print(self.currentPos.y+aside)
 
-        collisionNode = Position(self.currentPos.x+bside, self.currentPos.y+aside)
+        self.collisionNode = Position(self.currentPos.x+bside, self.currentPos.y+aside)
         shouldMove = True
         # collisionDraw = None
 
@@ -82,24 +85,28 @@ class AntModel:
         # collisionDraw.setFill('purple')
         # collisionDraw.draw(self.win)
 
-        print(len(allTiles))
+        # print(len(allTiles))
 
-        currentSegment = (m.floor(scale*(self.currentPos.x/100)),m.floor(scale*(self.currentPos.y/100)))
-        print(currentSegment)
-        time.sleep(20)
+        self.currentSegment = (m.floor(scale*((self.currentPos.x-100/3)/100)) + (m.floor(scale*((self.currentPos.y-100/3)/100))*length))
+
+        # print(currentSegment)
+        # time.sleep(0.05)
         
-        i2=0
-        while i2 < 9:
-            print("----------------------------------")
-            allTiles[i2].printPosition()
+        # print(str(self.currentSegment) + " x: " + str(m.floor(scale*((self.currentPos.x-100/3)/100))) + " y: " + str(m.floor(scale*((self.currentPos.y)/100))*length))
+        i = 0
+        while i < len(allSectionsTiles[self.currentSegment]):
 
-            if collisionNode.Colliding(allTiles[i2]):
-                shouldMove = False
-                i2=9999
-            i2+=1
+            if self.collisionNode.Colliding(allSectionsTiles[self.currentSegment][i]):
+                self.colliding = True
+                self.rotation = 360*random.random()
+                self.setRotation()
+
+                i=9999
+            i+=1
             
-        if shouldMove == True:
+        if self.colliding == False:
             self.antDraw.move(bside, aside)
             self.currentPos.movePosition(bside, aside)
             
             # print(allTiles[i].position.x)
+

@@ -16,9 +16,13 @@ from turtle import position
 from graphics import *
 from position import *
 
+# Size Definition of the maze
+height = 3
+length = 3
+sumOfSections = height * length
 
 allTiles = []
-allSections = []
+allSectionsTiles = []
 
 wallFormations = {00: [1, 2, 3, 4, 5, 6, 7, 8, 9],
                   10: [1, 2, 3, 7, 8, 9], 11: [1, 3, 4, 6, 7, 9],
@@ -57,27 +61,26 @@ class Tile:
         self.drawTile.draw(win)
 
     def printPosition(self):
-        print(str(self.position.x) + " " + str(self.position.y))
+        print("x: " + str(self.position.x) + " y: " + str(self.position.y))
 
 
 class Section:
     # Section seperation pairs
     pairedWalls = {'N': 'S', 'S': 'N', 'E': 'W', 'W': 'E'}
     window = None
-    allTiles = []
 
     def __init__(self, col, row, window):
         # Initialize a section at given (x, y), starts surrounded by walls
         self.column = col
         self.row = row
         self.window = window
+        self.personalizedTiles = []
 
         self.walls = {'N': True, 'E': True, 'S': True, 'W': True}
 
         self.goal = 'None'
 
         self.sectionID = 00
-        allSections.append(self)
 
     def hasAllWalls(self):
         # Returns true if section still has all it's walls
@@ -102,10 +105,14 @@ class Section:
                         self.row * 100)), (operations[row] + (self.column * 100)))
 
                     allTiles.append(T)
+                    self.personalizedTiles.append(T)
 
                     Tdraw = T
                     Tdraw.drawThis(scaler, self.window)
                 count += 1
+
+        allSectionsTiles.append(self.personalizedTiles)
+
 
     def returnGlobalT(self):
         return self.globalT

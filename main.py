@@ -11,23 +11,22 @@ from maze import *
 
 win = GraphWin('Simulaton', 1920/2, 1080/2) # give title and dimensions
 
-# Size Definition of the maze
-height = 5
-length = 9
-sumOfSections = height * length
+
 
 # Maze Generation and display
 generatedMaze = Maze(length, height, win)
 generatedMaze.generateMaze()
-print(generatedMaze)
+# print(generatedMaze)
 generatedMaze.renderMaze()
+
+# print(len(allSectionsTiles[1]))
 
 antLimit = 5
 antIteration = 0
 
 
 while len(allAnts) < antLimit:
-        posForAnt = Position(1920/4, 1080/4)
+        posForAnt = Position(250/3, 250/3)
         antObj = AntModel(posForAnt, win, allTiles, sumOfSections)
         #print("ant created")
 #print("ant creation finished")
