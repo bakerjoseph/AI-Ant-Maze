@@ -282,23 +282,27 @@ class Maze:
     def startPosition(self):
         # Return start special area Position object
         startSection = self.specialAreas[0]
-        return Position(startSection.column, startSection.row)
+        # Tile height and width constant
+        tileVal = 100/3
+        # Getting to the center of the center tile aka the middle of special area
+        startTileCol = 100 * (startSection.column + (tileVal + tileVal/2))
+        startTileRow = 100 * (startSection.row + (tileVal + tileVal/2))
+        return Position(startTileCol, startTileRow)
 
     def endPosition(self):
         # Return end special area Position object
         endSection = self.specialAreas[1]
-        return Position(endSection.column, endSection.row)
+        # Tile height and width constant
+        tileVal = 100/3
+        # Getting to the center of the center tile aka the middle of special area
+        endTileCol = 100 * (endSection.column + (tileVal + tileVal/2))
+        endTileRow = 100 * (endSection.row + (tileVal + tileVal/2))
+        return Position(endTileCol, endTileRow)
 
 
 # Size Definition of the maze
 height = 5
 length = 9
-
-# Maze Generation and display
-generatedMaze = Maze(length, height)
-generatedMaze.generateMaze()
-print(generatedMaze)
-generatedMaze.renderMaze()
 
 inc = 0
 while(True):

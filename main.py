@@ -4,7 +4,7 @@ import random
 import math as m
 from graphics import *
 from multiprocessing import Process, Queue
-from maze import Maze
+from maze import *
 
 win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
 
@@ -49,6 +49,7 @@ class Path:
 
 allAnts = []
 bestPath = Path(Position(0, 0))
+objectiveFound = False
 
 
 def getBestPath():
@@ -58,7 +59,6 @@ def getBestPath():
 class AntModel:
 
     currentPos = Position(0, 0)
-    objective = False
     rotation = 0.0
     nextNode = 0
     nearbyNodes = []
@@ -104,7 +104,12 @@ class AntModel:
 
         self.antDraw.move(bside, aside)
         self.currentPos.movePosition(bside, aside)
-        # self.checkIfEnd(Maze.)
+        # Checks if the ant has reached the end special area
+        self.checkIfEnd(Maze.endPosition())
+        if(objectiveFound == True):
+            self.getNextNode()
+            # Needs to return something
+            self.calcAntBias()
 
     def writeToPath(self):
         self.path.add_node(self.currentPos)
@@ -113,17 +118,18 @@ class AntModel:
         bestPath = getBestPath()
         if(bestPath != 0 and bestPath.getTime() > self.path.getTime()):
             bestPath = self.path
+            objectiveFound = True
 
-    def getNextNode(self, nextNode):
+    def getNextNode(self):
         closestNodesList = []
         for i in range(bestPath.size()):
             xdis = self.currentPos.x - bestPath[i].x
             ydis = self.currentPos.y - bestPath[i].y
             totaldisSqr = (xdis * xdis) + (ydis * ydis)
-            if(m.sqrt(totaldisSqr) < 5 and nextNode <= i):
+            if(m.sqrt(totaldisSqr) < 5 and self.nextNode <= i):
                 closestNodesList.append(bestPath[i])
-                nextNode = closestNodesList[closestNodesList.size() - 1][1] + 1
-        return nextNode
+                self.nextNode = closestNodesList[closestNodesList.size(
+                ) - 1][1] + 1
 
     def calcAntBias(self):
         self.nextNode
@@ -134,24 +140,39 @@ class AntModel:
         # totaldis = m.sqrt(totaldisSqr)
 
     def checkIfEnd(self, endPos):
-        self.currentSegment
-        currentSegment = (m.floor(Maze.scale(self.currentPos.x/100)),
-                          m.floor(Maze.scale(self.currentPos.y/100)))
-        if (endPos.x == currentSegment[0] and endPos.y == currentSegment[1]):
+        self.currentSegment = (m.floor(Maze.scale*((self.currentPos.x-100/3)/100)),
+                               (m.floor(Maze.scale*((self.currentPos.y-100/3)/100))))
+        print("Checked for end")
+        # must compare center tile
+        if (endPos.x == self.currentSegment[1] and endPos.y == self.currentSegment[0]):
             self.checkBestPath()
             return True
         else:
             return False
 
+    def antSpawn(self, startPos):
+        random.randint(0, startPos.x)
+
+
+# Maze Generation and display
+generatedMaze = Maze(length, height, win)
+generatedMaze.generateMaze()
+print(generatedMaze)
+generatedMaze.renderMaze()
 
 antLimit = 5
 antIteration = 0
 
 while len(allAnts) < antLimit:
-    posForAnt = Position(1920/4, 1080/4)
+    #posForAnt = Position(1920/4, 1080/4)
+    startPos = Position(Maze.startPosition.x + (random.random() * 60 - 30),
+                        Maze.startPosition.y + (random.random() * 60 - 30))
+    posForAnt = startPos
     antObj = AntModel(posForAnt)
     print("ant created")
+    print(str(startPos.x) + " " + str(startPos.y))
 print("ant creation finished")
+
 
 print("simulation start")
 while True:
@@ -161,7 +182,6 @@ while True:
         allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
         antIteration += 1
-        #
         time.sleep((0.02 / antLimit))
         print("ants have moved")
 
