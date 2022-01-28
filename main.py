@@ -9,8 +9,15 @@ from ant import *
 # from position import *
 from maze import *
 
-win = GraphWin('Simulaton', 1920/2, 1080/2) # give title and dimensions
+win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
 
+
+allAnts = []
+bestPath = Path(Position(0, 0))
+
+
+def getBestPath():
+    return bestPath
 
 
 # Maze Generation and display
@@ -26,18 +33,25 @@ antIteration = 0
 
 
 while len(allAnts) < antLimit:
-        posForAnt = Position(250/3, 250/3)
-        antObj = AntModel(posForAnt, win, allTiles, sumOfSections)
-        #print("ant created")
-#print("ant creation finished")
+    #posForAnt = Position(1920/4, 1080/4)
+    startPos = Position(generatedMaze.startPosition().x + (random.random() * 30 - 15),
+                        generatedMaze.startPosition().y + (random.random() * 30 - 15))
+    posForAnt = startPos
+    antObj = AntModel(posForAnt, generatedMaze.endPosition(),
+                      win, allTiles, sumOfSections)
+    print("ant created")
+    print(str(startPos.x) + " " + str(startPos.y))
+print("ant creation finished")
 
-#print("simulation start")
+
+print("simulation start")
 while True:
 
-    # r = random.random()
+    # time.sleep(1000)
 
     while antIteration < antLimit:
-        allAnts[antIteration].setRotation()
+        allAnts[antIteration].writeToPath()
+        # allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
         antIteration += 1
         time.sleep((0.02 / (antLimit*10)))
@@ -45,7 +59,6 @@ while True:
 
     if antIteration >= antLimit:
         antIteration = 0
-
 
 
 # class ACO:

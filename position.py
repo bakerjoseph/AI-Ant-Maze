@@ -3,6 +3,7 @@ import time
 scaler = 1
 scale = scaler
 
+
 class Position:
     def __init__(self, x, y):
         self.x = x
@@ -26,8 +27,10 @@ class Position:
         posX = self.x
         posY = self.y
 
-        tileRangeStart = [scale*(tilePos.position.x), scale*(tilePos.position.y)] 
-        tileRangeEnd = [scale*(tilePos.position.x + (100/3)), scale*(tilePos.position.y + (100/3))]
+        tileRangeStart = [scale*(tilePos.position.x),
+                          scale*(tilePos.position.y)]
+        tileRangeEnd = [scale*(tilePos.position.x + (100/3)),
+                        scale*(tilePos.position.y + (100/3))]
 
         # print(str(posX) + " " + str(posY) + "\n" + str(tileRangeStart) + " " + str(tileRangeEnd))
         # time.sleep(2)
@@ -38,5 +41,3 @@ class Position:
             return True
 
         return False
-            
-        
