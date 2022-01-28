@@ -39,6 +39,7 @@ while len(allAnts) < antLimit:
     posForAnt = startPos
     antObj = AntModel(posForAnt, generatedMaze.endPosition(),
                       win, allTiles, sumOfSections)
+    allAnts.append(antObj)
     print("ant created")
     print(str(startPos.x) + " " + str(startPos.y))
 print("ant creation finished")
