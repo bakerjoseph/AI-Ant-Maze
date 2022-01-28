@@ -52,7 +52,7 @@ while True:
 
     while antIteration < antLimit:
         allAnts[antIteration].writeToPath()
-        # allAnts[antIteration].setRotation()
+        allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
         antIteration += 1
         time.sleep((0.02 / (antLimit*10)))
