@@ -121,11 +121,12 @@ class AntModel:
             self.antDraw.move(bside, aside)
             self.currentPos.movePosition(bside, aside)
             # Checks if the ant has reached the end special area
-            self.checkIfEnd(self.endPosition)
+            if (self.objective == False):
+                self.checkIfEnd(self.endPosition)
             if(self.objective == True):
                 self.getNextNode()
                 # Needs to return something
-                self.calcAntBias()
+                # self.calcAntBias()
             # print(allTiles[i].position.x)
 
     def writeToPath(self):
@@ -133,20 +134,20 @@ class AntModel:
 
     def checkBestPath(self):
         bestPath = getBestPath()
-        if(bestPath != 0 and bestPath.getTime() > self.path.getTime()):
+        if(len(bestPath) != 0 and bestPath.getTime() > self.path.getTime()):
             bestPath = self.path
-            objectiveFound = True
 
     def getNextNode(self):
         closestNodesList = []
-        for i in range(bestPath.size()):
+        for i in range(bestPath.__len__()):
             xdis = self.currentPos.x - bestPath[i].x
             ydis = self.currentPos.y - bestPath[i].y
             totaldisSqr = (xdis * xdis) + (ydis * ydis)
-            if(m.sqrt(totaldisSqr) < 5 and self.nextNode <= i):
+            if(self.objective == False and m.sqrt(totaldisSqr) < 5 and self.nextNode <= i):
                 closestNodesList.append(bestPath[i])
-                self.nextNode = closestNodesList[closestNodesList.size(
-                ) - 1][1] + 1
+                self.nextNode = max(closestNodesList)
+            if(self.objective == True and m.sqrt(totaldisSqr) < 5 and self.nextNode <= i):
+                self.nextNode = min(closestNodesList)
 
     def calcAntBias(self):
         self.nextNode
@@ -163,6 +164,7 @@ class AntModel:
         print(str(endPos.x) + " " + str(endPos.y))
 
         if ((endPos.x - 50/3) < self.currentPos.x and (endPos.x + 50/3) > self.currentPos.x and (endPos.y - 50/3) < self.currentPos.y and (endPos.y + 50/3) > self.currentPos.y):
+            self.objective = True
             print("An ant has reached the end")
             self.checkBestPath()
             return True

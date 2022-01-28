@@ -23,7 +23,7 @@ generatedMaze.renderMaze()
 
 # print(len(allSectionsTiles[1]))
 
-antLimit = 5
+antLimit = 100
 antIteration = 0
 
 
