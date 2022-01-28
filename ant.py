@@ -15,8 +15,11 @@ class Path:
     def add_node(self, position):
         self.posList.append(position)
 
-    def time(self):
+    def incrementTime(self):
         self.time += 1
+
+    def getTime(self):
+        return self.time
 
 
 allAnts = []
