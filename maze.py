@@ -17,8 +17,8 @@ from graphics import *
 from position import *
 
 # Size Definition of the maze
-height = 1
-length = 2
+height = 5
+length = 9
 sumOfSections = height * length
 
 allTiles = []
@@ -184,6 +184,7 @@ class Maze:
         sectionStack = []
         currentSection = self.sectionAt(self.currentX, self.currentY)
         vistedSections = 1
+        originDir = ''
         # Generate the maze by travelling through each section starting at (0, 0)
         while vistedSections < totalSections:
             neighbours = self.validNeighbours(currentSection)
@@ -192,11 +193,23 @@ class Maze:
                 currentSection = sectionStack.pop()
                 continue
             # Next section is randomly picked
-            direction, nextSection = random.choice(neighbours)
+            # If chosen direction is equal to origination direction, redirect if possible
+            do = True
+            breakloop = 0
+            while(do):
+                direction, nextSection = random.choice(neighbours)
+                if(direction != originDir):
+                    do = False
+                # Used to limit the ammount of times it can generate in the same direction
+                # And if there is no other directions after 3 iterations it will procede in that direction
+                elif(breakloop == 2):
+                    do = False
+                breakloop += 1
             currentSection.removeWall(nextSection, direction)
             sectionStack.append(currentSection)
             currentSection = nextSection
             vistedSections += 1
+            originDir = direction
         # Assign section IDs
         self.assignSectionID()
         # Declare start and end points
