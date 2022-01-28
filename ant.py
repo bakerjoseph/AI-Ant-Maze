@@ -20,6 +20,11 @@ class Path:
 
 
 allAnts = []
+bestPath = Path(Position(0, 0))
+
+
+def getBestPath():
+    return bestPath
 
 
 class AntModel:

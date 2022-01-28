@@ -13,11 +13,6 @@ win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
 
 
 allAnts = []
-bestPath = Path(Position(0, 0))
-
-
-def getBestPath():
-    return bestPath
 
 
 # Maze Generation and display
