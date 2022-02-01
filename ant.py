@@ -84,8 +84,7 @@ class AntModel:
                 c.draw(self.win)
                 xdis = targetNode.x - self.currentPos.x
                 ydis = targetNode.y - self.currentPos.y
-                # Something got flipped but it works
-                self.rotation = m.degrees(m.atan2(xdis, ydis))
+                self.rotation = m.degrees(m.atan2(ydis, xdis))
                 print(self.rotation)
             else:
                 self.setRandomRotation()
@@ -105,11 +104,11 @@ class AntModel:
 
         cside = 1
 
-        aside = cside * m.cos(m.radians(self.rotation))
-        bside = cside * m.sin(m.radians(self.rotation))
+        xoff = cside * m.cos(m.radians(self.rotation))
+        yoff = cside * m.sin(m.radians(self.rotation))
 
         self.collisionNode = Position(
-            self.currentPos.x+bside, self.currentPos.y+aside)
+            self.currentPos.x+xoff, self.currentPos.y+yoff)
 
         self.currentSegment = (m.floor(scale*((self.currentPos.x-100/3)/100)) +
                                (m.floor(scale*((self.currentPos.y-100/3)/100))*length))
@@ -126,8 +125,8 @@ class AntModel:
             i += 1
 
         if self.colliding == False:
-            self.antDraw.move(bside, aside)
-            self.currentPos.movePosition(bside, aside)
+            self.antDraw.move(xoff, yoff)
+            self.currentPos.movePosition(xoff, yoff)
             # Checks if the ant has reached the end special area
             if (AntModel.endFound == False):
                 self.checkIfEnd(self.endPosition)
