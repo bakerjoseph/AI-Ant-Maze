@@ -17,8 +17,8 @@ from graphics import *
 from position import *
 
 # Size Definition of the maze
-height = 5
-length = 9
+height = 1
+length = 2
 sumOfSections = height * length
 
 allTiles = []
@@ -178,6 +178,7 @@ class Maze:
             for y in range(self.lengthY):
                 currentSection = self.mazeMap[x][y]
                 currentSection.placeTiles()
+
 
     def generateMaze(self):
         totalSections = self.heightX * self.lengthY

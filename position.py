@@ -13,7 +13,7 @@ class Position:
         self.x = self.x + xmove
         self.y = self.y + ymove
 
-    def printPos(self):
+    def print(self):
         posString = "(" + str(self.x) + ", " + str(self.y) + ")"
 
         print(posString)

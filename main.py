@@ -23,7 +23,7 @@ generatedMaze.renderMaze()
 
 # print(len(allSectionsTiles[1]))
 
-antLimit = 100
+antLimit = 3
 antIteration = 0
 
 
@@ -46,9 +46,15 @@ while True:
     # time.sleep(1000)
 
     while antIteration < antLimit:
-        allAnts[antIteration].writeToPath()
-        allAnts[antIteration].setRotation()
-        allAnts[antIteration].move()
+        allAnts[antIteration].update()
+
+        # draw debug info
+        if(AntModel.endFound == True):
+            for point in AntModel.bestPath.posList:
+                c = Circle(Point(point.x, point.y), 2)
+                c.setFill('blue')
+                c.draw(win)
+
         antIteration += 1
         time.sleep((0.02 / (antLimit*10)))
         # allAnts[antIteration - 1].currentPos.printPos()

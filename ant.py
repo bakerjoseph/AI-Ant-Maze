@@ -1,49 +1,48 @@
 # import position
+import copy
 import math as m
+from os import path
+from platform import node
+from sqlite3 import Time
+from typing_extensions import Self
+
+from numpy import i0
 # from graphics import *
 # import random
 from maze import *
 
 
 class Path:
-    posList = []
-    time = 0.0
 
     def __init__(self, position):
         self.posList = [position]
+        self.time = 0.0
 
     def add_node(self, position):
         self.posList.append(position)
-
-    def incrementTime(self):
-        self.time += 1
 
     def getTime(self):
         return self.time
 
 
 allAnts = []
-bestPath = Path(Position(0, 0))
-
-
-def getBestPath():
-    return bestPath
 
 
 class AntModel:
 
-    path = []
-    objective = False
-    rotation = 0.0
-    allTiles = []
-
-    antDraw = None
-    win = None
+    bestPath = Path(Position(0, 0))
+    endFound = False
 
     def __init__(self, position, endPosition, window, allTiles, sumOfSections):
 
+        self.viewDistance = 25
+        self.objective = False
         self.colliding = True
-        self.currentPos = (Position(0, 0))
+        self.rotation = 0.0
+        self.currentPos = position
+        self.nodeDelay = 1
+        self.nextNodeInsertTime = 0
+        self.nextNode = 0
 
         self.sumOfSections = sumOfSections
 
@@ -51,15 +50,22 @@ class AntModel:
         self.win = window
 
         #print("I am an ant")
-        self.currentPos.setPosition(position)
         self.endPosition = endPosition
-        self.path = Path(self.currentPos)
+        self.path = Path(copy.deepcopy(self.currentPos))
 
         self.antDraw = Circle(Point(self.currentPos.x, self.currentPos.y), 5)
         self.antDraw.setFill('red')
         self.antDraw.draw(self.win)
 
         allAnts.append(self)
+
+    def update(self):
+        self.setRotation()
+        self.move()
+
+        if self.nextNodeInsertTime <= time.time():
+            self.nextNodeInsertTime = time.time() + self.nodeDelay
+            self.writeToPath()
 
     def random_num_gen(self):
         a = random.random()
@@ -69,6 +75,24 @@ class AntModel:
         return a
 
     def setRotation(self):
+
+        if(AntModel.endFound == True):
+            targetNode = self.getNextNode()
+            if(targetNode != None):
+                c = Circle(Point(targetNode.x, targetNode.y), 5)
+                c.setFill('green')
+                c.draw(self.win)
+                xdis = targetNode.x - self.currentPos.x
+                ydis = targetNode.y - self.currentPos.y
+                # Something got flipped but it works
+                self.rotation = m.degrees(m.atan2(xdis, ydis))
+                print(self.rotation)
+            else:
+                self.setRandomRotation()
+        else:
+            self.setRandomRotation()
+
+    def setRandomRotation(self):
         rotationDifference = self.random_num_gen()
         self.rotation = self.rotation + rotationDifference
         while self.rotation < 0:
@@ -79,40 +103,24 @@ class AntModel:
 
         self.colliding = False
 
-        aside = None
-        bside = None
         cside = 1
 
         aside = cside * m.cos(m.radians(self.rotation))
         bside = cside * m.sin(m.radians(self.rotation))
 
-        # print(self.currentPos.y+aside)
-
         self.collisionNode = Position(
             self.currentPos.x+bside, self.currentPos.y+aside)
-        shouldMove = True
-        # collisionDraw = None
-
-        # collisionDraw = Circle(Point(collisionNode.x, collisionNode.y), 3)
-        # collisionDraw.setFill('purple')
-        # collisionDraw.draw(self.win)
-
-        # print(len(allTiles))
 
         self.currentSegment = (m.floor(scale*((self.currentPos.x-100/3)/100)) +
                                (m.floor(scale*((self.currentPos.y-100/3)/100))*length))
 
-        # print(currentSegment)
-        # time.sleep(0.05)
-
-        # print(str(self.currentSegment) + " x: " + str(m.floor(scale*((self.currentPos.x-100/3)/100))) + " y: " + str(m.floor(scale*((self.currentPos.y)/100))*length))
         i = 0
         while i < len(allSectionsTiles[self.currentSegment]):
 
             if self.collisionNode.Colliding(allSectionsTiles[self.currentSegment][i]):
                 self.colliding = True
                 self.rotation = 360*random.random()
-                self.setRotation()
+                # self.setRotation()
 
                 i = 9999
             i += 1
@@ -121,33 +129,34 @@ class AntModel:
             self.antDraw.move(bside, aside)
             self.currentPos.movePosition(bside, aside)
             # Checks if the ant has reached the end special area
-            if (self.objective == False):
+            if (AntModel.endFound == False):
                 self.checkIfEnd(self.endPosition)
-            if(self.objective == True):
+            if(AntModel.endFound == True):
                 self.getNextNode()
-                # Needs to return something
-                # self.calcAntBias()
-            # print(allTiles[i].position.x)
 
     def writeToPath(self):
-        self.path.add_node(self.currentPos)
+        self.path.add_node(copy.deepcopy(self.currentPos))
 
     def checkBestPath(self):
-        bestPath = getBestPath()
-        if(len(bestPath) != 0 and bestPath.getTime() > self.path.getTime()):
-            bestPath = self.path
+        if(AntModel.endFound == False):
+            AntModel.bestPath = copy.deepcopy(self.path)
+        elif(len(AntModel.bestPath.posList) > len(self.path.posList)):
+            AntModel.bestPath = copy.deepcopy(self.path)
 
     def getNextNode(self):
+
         closestNodesList = []
-        for i in range(bestPath.__len__()):
-            xdis = self.currentPos.x - bestPath[i].x
-            ydis = self.currentPos.y - bestPath[i].y
+        for i in range(AntModel.bestPath.posList.__len__()):
+            xdis = self.currentPos.x - AntModel.bestPath.posList[i].x
+            ydis = self.currentPos.y - AntModel.bestPath.posList[i].y
             totaldisSqr = (xdis * xdis) + (ydis * ydis)
-            if(self.objective == False and m.sqrt(totaldisSqr) < 5 and self.nextNode <= i):
-                closestNodesList.append(bestPath[i])
-                self.nextNode = max(closestNodesList)
-            if(self.objective == True and m.sqrt(totaldisSqr) < 5 and self.nextNode <= i):
-                self.nextNode = min(closestNodesList)
+            if(totaldisSqr < self.viewDistance * self.viewDistance):
+                closestNodesList.append(i)
+
+        if(len(closestNodesList) == 0):
+            return None
+
+        return AntModel.bestPath.posList[max(closestNodesList)]
 
     def calcAntBias(self):
         self.nextNode
@@ -161,12 +170,15 @@ class AntModel:
         self.currentSegment = (m.floor(scale*((self.currentPos.x-100/3)/100)),
                                (m.floor(scale*((self.currentPos.y-100/3)/100))))
         # must compare center tile
-        print(str(endPos.x) + " " + str(endPos.y))
+        #print(str(endPos.x) + " " + str(endPos.y))
 
         if ((endPos.x - 50/3) < self.currentPos.x and (endPos.x + 50/3) > self.currentPos.x and (endPos.y - 50/3) < self.currentPos.y and (endPos.y + 50/3) > self.currentPos.y):
             self.objective = True
+            self.path.time = time.time()
             print("An ant has reached the end")
+            self.writeToPath()
             self.checkBestPath()
+            AntModel.endFound = True
             return True
         else:
             return False
