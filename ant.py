@@ -1,4 +1,5 @@
 # import position
+import copy
 import math as m
 from os import path
 from platform import node
@@ -41,6 +42,7 @@ class AntModel:
         self.objective = False
         self.colliding = True
         self.currentPos = (Position(0,0))
+        self.nextNodeInsertTime = 0
 
         self.sumOfSections = sumOfSections
 
