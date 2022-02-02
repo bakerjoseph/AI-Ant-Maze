@@ -18,13 +18,8 @@ from graphics import *
 from position import *
 
 # Size Definition of the maze
-<<<<<<< Updated upstream
-height = 2
-length = 1
-=======
 height = 1
 length = 3
->>>>>>> Stashed changes
 sumOfSections = height * length
 
 allTiles = []
