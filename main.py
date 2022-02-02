@@ -143,6 +143,11 @@ generatedMaze.generateMaze()
 print(generatedMaze)
 generatedMaze.renderMaze()
 
+<<<<<<< Updated upstream
+=======
+# print(len(allSectionsTiles[1]))
+
+>>>>>>> Stashed changes
 antLimit = 1
 antIteration = 0
 
