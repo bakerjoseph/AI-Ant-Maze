@@ -33,7 +33,7 @@ class AntModel:
 
     def __init__(self, position, endPosition, window, allTiles, sumOfSections):
 
-        self.viewDistance = 40
+        self.viewDistance = 20
         self.objective = False
         self.colliding = True
         self.rotation = 0.0
@@ -97,7 +97,7 @@ class AntModel:
         while self.rotation < 0:
             self.rotation += 360
         self.rotation = self.rotation % 360
-        print(self.rotationInfluence)
+        # print(self.rotationInfluence)
 
     def move(self):
 
@@ -131,7 +131,7 @@ class AntModel:
 
         if self.colliding == False:
             self.antDraw.move(xoff, yoff)
-            self.currentPos.movePosition(xoff, yoff)
+            self.currentPos.movePositon(xoff, yoff)
             # Checks if the ant has reached the end special area
             if (AntModel.endFound == False):
                 self.checkIfEnd(self.endPosition)
@@ -150,16 +150,23 @@ class AntModel:
     def getNextNode(self):
 
         closestNodesList = []
+        currentNode = None
         for i in range(AntModel.bestPath.posList.__len__()):
             xdis = self.currentPos.x - AntModel.bestPath.posList[i].x
             ydis = self.currentPos.y - AntModel.bestPath.posList[i].y
             totaldisSqr = (xdis * xdis) + (ydis * ydis)
             if(totaldisSqr < self.viewDistance * self.viewDistance):
                 closestNodesList.append(i)
+            if(xdis == 0 and ydis == 0):
+                currentNode = i
 
+        #print("closest node list size: " + str(len(closestNodesList)))
+        # second param needs to be changed once going back to start is integrated
+        if(currentNode == max(closestNodesList) and self.objective == False):
+            return AntModel.bestPath.posList[currentNode + 1]
         if(len(closestNodesList) == 0):
             return None
-
+        print("Target Node: " + str(max(closestNodesList)))
         return AntModel.bestPath.posList[max(closestNodesList)]
 
     def calcAntBias(self):
