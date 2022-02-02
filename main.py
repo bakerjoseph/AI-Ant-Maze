@@ -53,7 +53,7 @@ while True:
         if(AntModel.endFound == True and first):
             for point in AntModel.bestPath.posList:
                 c = Circle(Point(point.x, point.y), 2)
-                c.setFill('cyan')
+                c.setFill('olive')
                 c.draw(win)
             first = False
 

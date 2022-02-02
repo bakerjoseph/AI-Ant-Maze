@@ -33,7 +33,7 @@ class AntModel:
 
     def __init__(self, position, endPosition, window, allTiles, sumOfSections):
 
-        self.viewDistance = 30
+        self.viewDistance = 40
         self.objective = False
         self.colliding = True
         self.rotation = 0.0
