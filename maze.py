@@ -12,12 +12,12 @@
 #  4 [three way] - 40 three way north to south branch east - 41 three way east to west branch to south - 42 three way south to north branch west - 43 three way west to east branch north
 #  5 [four way] - 50 four way connection
 import random
-from turtle import position
+from turtle import color, position
 from graphics import *
 from position import *
 
 # Size Definition of the maze
-height = 2
+height = 1
 length = 3
 sumOfSections = height * length
 
@@ -30,7 +30,6 @@ wallFormations = {00: [1, 2, 3, 4, 5, 6, 7, 8, 9],
                   30: [1, 3, 4, 7, 8, 9], 31: [1, 2, 3, 4, 7, 9], 32: [1, 2, 3, 6, 7, 9], 33: [1, 3, 6, 7, 8, 9],
                   40: [1, 3, 4, 7, 9], 41: [1, 2, 3, 7, 9], 42: [1, 3, 6, 7, 9], 43: [1, 3, 7, 8, 9],
                   50: [1, 3, 7, 9]}
-
 
 
 class Tile:
@@ -50,14 +49,13 @@ class Tile:
         self.position.x = tileX
         self.position.y = tileY
 
-
     def obtainPosition(self):
         return self.position
 
-    def drawThis(self, scale, win):
+    def drawThis(self, scale, win, color):
         self.drawTile = Rectangle(Point(scale*(self.position.x), scale*(self.position.y)), Point(
             scale*(self.position.x + (100/3)), scale*(self.position.y + (100/3))))
-        self.drawTile.setFill('blue')
+        self.drawTile.setFill(color)
         self.drawTile.draw(win)
 
     def printPosition(self):
@@ -100,6 +98,11 @@ class Section:
         # If the sequence contains the count
         for col in range(operations.__len__()):
             for row in range(operations.__len__()):
+                if(count == 5 and (self.goal.__contains__("Start") or self.goal.__contains__("End"))):
+                    T = Tile(self.row, self.column, (operations[col] + (
+                        self.row * 100)), (operations[row] + (self.column * 100)))
+                    T.drawThis(scaler, self.window, 'green' if self.goal.__contains__(
+                        "Start") else 'orange')
                 if(sequence.__contains__(count)):
                     T = Tile(self.row, self.column, (operations[col] + (
                         self.row * 100)), (operations[row] + (self.column * 100)))
@@ -108,20 +111,21 @@ class Section:
                     self.personalizedTiles.append(T)
 
                     Tdraw = T
-                    Tdraw.drawThis(scaler, self.window)
+                    Tdraw.drawThis(scaler, self.window, "blue")
                 count += 1
 
         allSectionsTiles.append(self.personalizedTiles)
 
-
     def returnGlobalT(self):
         return self.globalT
-    
 
 
 class Maze:
-
     window = None
+    # List of deadends
+    deadends = []
+    # List of special areas
+    specialAreas = []
 
     def __init__(self, yLength, xHeight, window):
         # Size of defined maze height (y) by length (x)
@@ -174,33 +178,42 @@ class Maze:
             for y in range(self.lengthY):
                 currentSection = self.mazeMap[x][y]
                 currentSection.placeTiles()
-                
+
     def generateMaze(self):
         totalSections = self.heightX * self.lengthY
         sectionStack = []
         currentSection = self.sectionAt(self.currentX, self.currentY)
         vistedSections = 1
-        endFound = False
+        originDir = ''
         # Generate the maze by travelling through each section starting at (0, 0)
-        currentSection.goal = "Start"
         while vistedSections < totalSections:
             neighbours = self.validNeighbours(currentSection)
             # If there are no unvisted sections return to previous section
             if not neighbours:
-                # Mark the first dead end section
-                if not endFound:
-                    currentSection.goal = "1st End"
-                    endFound = True
                 currentSection = sectionStack.pop()
                 continue
             # Next section is randomly picked
-            direction, nextSection = random.choice(neighbours)
+            # If chosen direction is equal to origination direction, redirect if possible
+            do = True
+            breakloop = 0
+            while(do):
+                direction, nextSection = random.choice(neighbours)
+                if(direction != originDir):
+                    do = False
+                # Used to limit the ammount of times it can generate in the same direction
+                # And if there is no other directions after 3 iterations it will procede in that direction
+                elif(breakloop == 2):
+                    do = False
+                breakloop += 1
             currentSection.removeWall(nextSection, direction)
             sectionStack.append(currentSection)
             currentSection = nextSection
             vistedSections += 1
+            originDir = direction
         # Assign section IDs
         self.assignSectionID()
+        # Declare start and end points
+        self.declareSpecialArea()
 
     def sectionAt(self, x, y):
         return self.mazeMap[x][y]
@@ -220,6 +233,10 @@ class Maze:
                     wallSections.append("W")
                 currentSection.sectionID = self.sectionWallsToPieceID(
                     ''.join(wallSections))
+                # Check if currentSection.sectionID starts with 2
+                # If it does, it is a deadend, add it to the list of them
+                if(currentSection.sectionID.startswith('2')):
+                    self.deadends.append(currentSection)
 
     def sectionWallsToPieceID(self, walls):
         # Given a set of walls, return what piece that would represent
@@ -264,6 +281,18 @@ class Maze:
 
         return idValue
 
+    def declareSpecialArea(self):
+        # Scramble deadends list
+        random.shuffle(self.deadends)
+        # Randomly grab two indexs and assign start and end goal
+        start = random.randrange(len(self.deadends))
+        self.deadends[start].goal = "Start"
+        self.specialAreas.append(self.deadends[start])
+        self.deadends.pop(start)
+        end = random.randrange(len(self.deadends))
+        self.deadends[end].goal = "End"
+        self.specialAreas.append(self.deadends[end])
+
     def validNeighbours(self, section):
         # Required operation to go in a certain direction
         directionDisplacement = [('N', (0, -1)),
@@ -285,3 +314,33 @@ class Maze:
                 if neighbour.hasAllWalls():
                     neighbours.append((direction, neighbour))
         return neighbours
+
+    def startPosition(self):
+        # Return start special area Position object
+        startSection = self.specialAreas[0]
+        # Tile height and width constant
+        tileVal = 100/3
+        # Getting to the center of the center tile aka the middle of special area
+
+        startTileCol = (
+            (3*(tileVal * startSection.column) + (150/3))) + 100/3
+        startTileRow = (
+            (3*(tileVal * startSection.row) + (150/3))) + 100/3
+        # print("col: " + str(startTileRow) +
+        #       " row: " + str(startTileCol))
+        return Position(startTileRow, startTileCol)
+
+    def endPosition(self):
+        # Return end special area Position object
+        endSection = self.specialAreas[1]
+        # Tile height and width constant
+        tileVal = 100/3
+        # Getting to the center of the center tile aka the middle of special area
+
+        endTileCol = (
+            (3*(tileVal * endSection.column) + (150/3))) + 100/3
+        endTileRow = (
+            (3*(tileVal * endSection.row) + (150/3))) + 100/3
+        # print("col: " + str(startTileRow) +
+        #   " row: " + str(startTileCol))
+        return Position(endTileRow, endTileCol)

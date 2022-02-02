@@ -42,6 +42,7 @@ class AntModel:
         self.objective = False
         self.colliding = True
         self.currentPos = (Position(0,0))
+        self.rotation = 0
         self.nextNodeInsertTime = 0
 
         self.sumOfSections = sumOfSections
