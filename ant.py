@@ -57,6 +57,13 @@ class AntModel:
         self.antDraw.setFill('red')
         self.antDraw.draw(self.win)
 
+    def update(self):
+        self.setRotation()
+        self.move()
+
+        if self.nextNodeInsertTime <= time.time():
+            self.nextNodeInsertTime = time.time() + self.nodeDelay
+            self.writeToPath()
 
     def doesBestPathExist(self):
         return self.bestPathExists
