@@ -17,7 +17,11 @@ from graphics import *
 from position import *
 
 # Size Definition of the maze
+<<<<<<< Updated upstream
 height = 3
+=======
+height = 2
+>>>>>>> Stashed changes
 length = 3
 sumOfSections = height * length
 

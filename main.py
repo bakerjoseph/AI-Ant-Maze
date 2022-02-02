@@ -23,24 +23,55 @@ generatedMaze.renderMaze()
 
 antLimit = 5
 antIteration = 0
+printPath = True
 
 
 while len(allAnts) < antLimit:
+<<<<<<< Updated upstream
         posForAnt = Position(250/3, 250/3)
         antObj = AntModel(posForAnt, win, allTiles, sumOfSections)
         #print("ant created")
 #print("ant creation finished")
 
 #print("simulation start")
+=======
+    #posForAnt = Position(1920/4, 1080/4)
+    startPos = Position(generatedMaze.startPosition().x + (random.random() * 30 - 15),
+                        generatedMaze.startPosition().y + (random.random() * 30 - 15))
+    posForAnt = startPos
+    antObj = AntModel(posForAnt, generatedMaze.endPosition(), generatedMaze.startPosition(),
+                      win, allTiles, sumOfSections)
+    allAnts.append(antObj)
+
+    print("ant created")
+    print(str(startPos.x) + " " + str(startPos.y))
+print("ant creation finished")
+
+
+print("simulation start")
+>>>>>>> Stashed changes
 while True:
 
     # r = random.random()
 
     while antIteration < antLimit:
+<<<<<<< Updated upstream
         allAnts[antIteration].setRotation()
         allAnts[antIteration].move()
+=======
+        allAnts[antIteration].update()
+
+        # draw debug info
+        if(allAnts[antIteration].doesBestPathExist() == True and printPath == True):
+            for point in AntModel.bestPath.posList:
+                c = Circle(Point(point.x, point.y), 2)
+                c.setFill('blue')
+                c.draw(win)
+                printPath = False
+
+>>>>>>> Stashed changes
         antIteration += 1
-        time.sleep((0.02 / (antLimit*10)))
+        time.sleep((0.002 / (antLimit*10)))
         # allAnts[antIteration - 1].currentPos.printPos()
 
     if antIteration >= antLimit:
