@@ -27,14 +27,6 @@ printPath = True
 
 
 while len(allAnts) < antLimit:
-<<<<<<< Updated upstream
-        posForAnt = Position(250/3, 250/3)
-        antObj = AntModel(posForAnt, win, allTiles, sumOfSections)
-        #print("ant created")
-#print("ant creation finished")
-
-#print("simulation start")
-=======
     #posForAnt = Position(1920/4, 1080/4)
     startPos = Position(generatedMaze.startPosition().x + (random.random() * 30 - 15),
                         generatedMaze.startPosition().y + (random.random() * 30 - 15))
@@ -49,16 +41,11 @@ print("ant creation finished")
 
 
 print("simulation start")
->>>>>>> Stashed changes
 while True:
 
     # r = random.random()
 
     while antIteration < antLimit:
-<<<<<<< Updated upstream
-        allAnts[antIteration].setRotation()
-        allAnts[antIteration].move()
-=======
         allAnts[antIteration].update()
 
         # draw debug info
@@ -69,7 +56,6 @@ while True:
                 c.draw(win)
                 printPath = False
 
->>>>>>> Stashed changes
         antIteration += 1
         time.sleep((0.002 / (antLimit*10)))
         # allAnts[antIteration - 1].currentPos.printPos()

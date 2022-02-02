@@ -1,14 +1,11 @@
 # import position
 import math as m
-<<<<<<< Updated upstream
-=======
 from os import path
 from platform import node
 from sqlite3 import Time
 # from typing_extensions import Self
 
 # from numpy import i0
->>>>>>> Stashed changes
 # from graphics import *
 # import random
 from maze import *
@@ -31,18 +28,6 @@ allAnts = []
 
 class AntModel:
 
-<<<<<<< Updated upstream
-    path = []
-    objective = False
-    rotation = 0.0
-    allTiles = []
-
-    antDraw = None
-    win = None
-
-    def __init__(self, position, window, allTiles, sumOfSections):
-
-=======
     bestPath = None
 
     def __init__(self, position, endPosition, startPosition, window, allTiles, sumOfSections):
@@ -54,7 +39,6 @@ class AntModel:
         self.destination = False
         self.viewDistance = 40
         self.objective = False
->>>>>>> Stashed changes
         self.colliding = True
         self.currentPos = (Position(0,0))
 
@@ -64,15 +48,10 @@ class AntModel:
         self.win = window
 
         #print("I am an ant")
-<<<<<<< Updated upstream
-        self.currentPos.setPosition(position)
-        self.path = Path(self.currentPos)
-=======
         self.endPosition = endPosition
         self.startPosition = startPosition
 
         self.path = Path(copy.deepcopy(self.currentPos))
->>>>>>> Stashed changes
 
         self.antDraw = Circle(Point(self.currentPos.x, self.currentPos.y), 5)
         self.antDraw.setFill('red')
@@ -90,8 +69,6 @@ class AntModel:
         return a
 
     def setRotation(self):
-<<<<<<< Updated upstream
-=======
 
         if(self.destination == False and self.bestPathExists == True):
             targetNode = self.getNextNode()
@@ -125,7 +102,6 @@ class AntModel:
             self.setRandomRotation()
 
     def setRandomRotation(self):
->>>>>>> Stashed changes
         rotationDifference = self.random_num_gen()
         self.rotation = self.rotation + rotationDifference
         while self.rotation < 0:
@@ -173,13 +149,6 @@ class AntModel:
             i+=1
             
         if self.colliding == False:
-<<<<<<< Updated upstream
-            self.antDraw.move(bside, aside)
-            self.currentPos.movePosition(bside, aside)
-            
-            # print(allTiles[i].position.x)
-
-=======
             self.antDraw.move(xoff, yoff)
             self.currentPos.movePosition(xoff, yoff)
             # Checks if the ant has reached the end special area
@@ -279,4 +248,3 @@ class AntModel:
         random.randint(0, startPos.x)
 
     
->>>>>>> Stashed changes
