@@ -179,7 +179,6 @@ class Maze:
                 currentSection = self.mazeMap[x][y]
                 currentSection.placeTiles()
 
-
     def generateMaze(self):
         totalSections = self.heightX * self.lengthY
         sectionStack = []

@@ -4,9 +4,7 @@ import math as m
 from os import path
 from platform import node
 from sqlite3 import Time
-from typing_extensions import Self
 
-from numpy import i0
 # from graphics import *
 # import random
 from maze import *
@@ -35,7 +33,7 @@ class AntModel:
 
     def __init__(self, position, endPosition, window, allTiles, sumOfSections):
 
-        self.viewDistance = 25
+        self.viewDistance = 40
         self.objective = False
         self.colliding = True
         self.rotation = 0.0
