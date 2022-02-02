@@ -33,7 +33,7 @@ class AntModel:
 
     def __init__(self, position, endPosition, window, allTiles, sumOfSections):
 
-        self.viewDistance = 40
+        self.viewDistance = 30
         self.objective = False
         self.colliding = True
         self.rotation = 0.0
@@ -78,7 +78,7 @@ class AntModel:
             targetNode = self.getNextNode()
             if(targetNode != None):
                 c = Circle(Point(targetNode.x, targetNode.y), 5)
-                c.setFill('green')
+                c.setFill('yellow')
                 c.draw(self.win)
                 xdis = targetNode.x - self.currentPos.x
                 ydis = targetNode.y - self.currentPos.y
