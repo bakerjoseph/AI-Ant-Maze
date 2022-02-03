@@ -5,9 +5,11 @@
 # import math as m
 # from graphics import *
 # from multiprocessing import Process, Queue
+from hashlib import new
 from ant import *
 # from position import *
 from maze import *
+from datetime import datetime
 
 win = GraphWin('Simulaton', 1920/2, 1080/2)  # give title and dimensions
 
@@ -39,12 +41,34 @@ while len(allAnts) < antLimit:
     print(str(startPos.x) + " " + str(startPos.y))
 print("ant creation finished")
 
+
+startTime = datetime.now()
+textTime = Text(Point((generatedMaze.lengthY*100)+200,90),time.strftime("%H:%M:%S",time.gmtime()))
+textTime.draw(win)
+
+
+stats = 0
+
 # Draw the first path once
 first = True
 print("simulation start")
 while True:
 
     # time.sleep(1000)
+    if(stats == 0):
+        header = Text(Point((generatedMaze.lengthY*100)+200,50), "Simulation Stats")
+        header.setStyle("bold")
+        header.draw(win)
+
+        ants = Text(Point((generatedMaze.lengthY*100)+200,70), "Amount of Ants: " + str(antLimit))
+        ants.draw(win)
+        bestTime = Text(Point((generatedMaze.lengthY*100)+200,110), "Best Time:"+ str(AntModel.bestPath.time))
+        bestTime.draw(win)
+
+        stats = 1
+    else:
+        endTime = (datetime.now()-startTime)
+        textTime.setText(datetime.now()-startTime)
 
     while antIteration < antLimit:
         allAnts[antIteration].update()
@@ -52,6 +76,7 @@ while True:
         # draw debug info
         if(AntModel.endFound == True and first):
             for point in AntModel.bestPath.posList:
+                bestTime.setText("Best Time:{}".format(endTime))
                 c = Circle(Point(point.x, point.y), 2)
                 c.setFill('olive')
                 c.draw(win)
