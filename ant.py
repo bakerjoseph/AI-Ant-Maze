@@ -28,11 +28,15 @@ allAnts = []
 
 class AntModel:
 
-    bestPath = Path(Position(0, 0))
-    endFound = False
+    bestPath = None
 
-    def __init__(self, position, endPosition, window, allTiles, sumOfSections):
+    def __init__(self, position, startPosition, endPosition, window, allTiles, sumOfSections):
 
+        self.bestPathExists = False
+        self.followedPath = None
+        self.endFound = False
+        self.startFound = True
+        self.destination = False
         self.viewDistance = 20
         self.objective = False
         self.colliding = True
@@ -42,21 +46,24 @@ class AntModel:
         self.nextNodeInsertTime = 0
         self.nextNode = 0
         self.rotationInfluence = 1
+        self.targetNode = 0
 
         self.sumOfSections = sumOfSections
 
         self.allTiles = allTiles
         self.win = window
 
-        #print("I am an ant")
+        # print("I am an ant")
         self.endPosition = endPosition
+        self.startPosition = startPosition
+
         self.path = Path(copy.deepcopy(self.currentPos))
 
         self.antDraw = Circle(Point(self.currentPos.x, self.currentPos.y), 5)
         self.antDraw.setFill('red')
         self.antDraw.draw(self.win)
 
-        allAnts.append(self)
+        # allAnts.append(self)
 
     def update(self):
         self.setRotation()
@@ -64,31 +71,40 @@ class AntModel:
 
         if self.nextNodeInsertTime <= time.time():
             self.nextNodeInsertTime = time.time() + self.nodeDelay
+            print("time: " + str(time.time()))
             self.writeToPath()
+
+        print("start position: " + str(self.startPosition))
+
+    def doesBestPathExist(self):
+        return self.bestPathExists
 
     def random_num_gen(self):
         a = random.random()
         a = (a*40) - 20
         # a = a*360
-        #print("random number generated " + str(a))
+        # print("random number generated " + str(a))
         return a
 
     def setRotation(self):
 
-        if(AntModel.endFound == True):
-            targetNode = self.getNextNode()
-            if(targetNode != None):
-                c = Circle(Point(targetNode.x, targetNode.y), 5)
+        if(self.bestPathExists == True):
+            self.targetNode = self.getNextNode()
+            # print("end was found")
+            if(self.targetNode != None):
+                c = Circle(Point(self.targetNode.x, self.targetNode.y), 5)
                 c.setFill('yellow')
                 c.draw(self.win)
-                xdis = targetNode.x - self.currentPos.x
-                ydis = targetNode.y - self.currentPos.y
+                xdis = self.targetNode.x - self.currentPos.x
+                ydis = self.targetNode.y - self.currentPos.y
                 self.rotation = m.degrees(
                     m.atan2(ydis, xdis))
             else:
                 self.setRandomRotation()
         else:
             self.setRandomRotation()
+
+        # print(str(self.endFound))
 
     def setRandomRotation(self):
         rotationDifference = self.random_num_gen()
@@ -120,7 +136,7 @@ class AntModel:
             if self.collisionNode.Colliding(allSectionsTiles[self.currentSegment][i]):
                 self.colliding = True
                 self.rotationInfluence = 10
-                #self.rotation = 360*random.random()
+                # self.rotation = 360*random.random()
                 # self.setRotation()
 
                 i = 9999
@@ -131,18 +147,33 @@ class AntModel:
 
         if self.colliding == False:
             self.antDraw.move(xoff, yoff)
-            self.currentPos.movePositon(xoff, yoff)
+            self.currentPos.movePosition(xoff, yoff)
             # Checks if the ant has reached the end special area
-            if (AntModel.endFound == False):
-                self.checkIfEnd(self.endPosition)
-            if(AntModel.endFound == True):
-                self.getNextNode()
+
+            if self.destination == False:
+                self.endFound = self.checkIfEnd(self.endPosition)
+
+            print("Destination1: " + str(self.destination))
+            if self.destination == True:
+                self.startFound = self.checkIfStart(self.startPosition)
+
+            print("Destination2: " + str(self.destination))
+
+            # if((self.endFound == True or self.startFound == True) and self.bestPathExists == True):
+            #     self.getNextNode()
+
+            # if (AntModel.endFound == False):
+            #     self.checkIfEnd(self.endPosition)
+            # else:
+            #     self.getNextNode()
+            #     if(self.objective == False):
+            #         self.checkIfEnd(self.endPosition)
 
     def writeToPath(self):
         self.path.add_node(copy.deepcopy(self.currentPos))
 
     def checkBestPath(self):
-        if(AntModel.endFound == False):
+        if(self.bestPathExists == False):
             AntModel.bestPath = copy.deepcopy(self.path)
         elif(len(AntModel.bestPath.posList) > len(self.path.posList)):
             AntModel.bestPath = copy.deepcopy(self.path)
@@ -150,23 +181,64 @@ class AntModel:
     def getNextNode(self):
 
         closestNodesList = []
+
+        try:
+
+            for i in range(self.followedPath.posList.__len__()):
+                xdis = self.currentPos.x - self.followedPath.posList[i].x
+                ydis = self.currentPos.y - self.followedPath.posList[i].y
+                totaldisSqr = (xdis * xdis) + (ydis * ydis)
+                if(totaldisSqr < self.viewDistance * self.viewDistance):
+                    closestNodesList.append(i)
+                    print("closest: " + str(closestNodesList))
+        except:
+            pass
+
+        if(len(closestNodesList) == 0):
+            return None
+
+        try:
+            if(self.destination == False and self.targetNode <= self.followedPath.posList[max(closestNodesList)]):
+                print(str(max(closestNodesList)+1))
+                return self.followedPath.posList[max(closestNodesList) + 1]
+        except:
+            return self.followedPath.posList[max(closestNodesList)]
+
+        try:
+            if(self.destination == True and self.targetNode >= self.followedPath.posList[max(closestNodesList)]):
+                print(str(min(closestNodesList)-1))
+                return self.followedPath.posList[min(closestNodesList) - 1]
+        except:
+            return self.followedPath.posList[min(closestNodesList)]
+
+    def getNextNodeCommented(self):
+        closestNodesList = []
         currentNode = None
-        for i in range(AntModel.bestPath.posList.__len__()):
-            xdis = self.currentPos.x - AntModel.bestPath.posList[i].x
-            ydis = self.currentPos.y - AntModel.bestPath.posList[i].y
+        for i in range(self.followedPath.posList.__len__()):
+            xdis = self.currentPos.x - self.followedPath.posList[i].x
+            ydis = self.currentPos.y - self.followedPath.posList[i].y
             totaldisSqr = (xdis * xdis) + (ydis * ydis)
             if(totaldisSqr < self.viewDistance * self.viewDistance):
                 closestNodesList.append(i)
-            if(xdis == 0 and ydis == 0):
+            if(xdis <= 0.2 and ydis <= 0.2):
                 currentNode = i
+                # print("current node: " + str(currentNode))
 
-        #print("closest node list size: " + str(len(closestNodesList)))
+        print(str(max(closestNodesList)))
+
+        # print("closest node list size: " + str(len(closestNodesList)))
         # second param needs to be changed once going back to start is integrated
-        if(currentNode == max(closestNodesList) and self.objective == False):
-            return AntModel.bestPath.posList[currentNode + 1]
+        if(currentNode == max(closestNodesList) and self.destination == False):
+            # print("cheating")
+            try:
+                return AntModel.bestPath.posList[currentNode + 1]
+            except:
+                pass
         if(len(closestNodesList) == 0):
             return None
-        print("Target Node: " + str(max(closestNodesList)))
+        # print("Target Node: " + str(max(closestNodesList)))
+        print(str(max(closestNodesList)))
+        print("size of posList: " + str(len(AntModel.bestPath.posList)))
         return AntModel.bestPath.posList[max(closestNodesList)]
 
     def calcAntBias(self):
@@ -181,7 +253,7 @@ class AntModel:
         self.currentSegment = (m.floor(scale*((self.currentPos.x-100/3)/100)),
                                (m.floor(scale*((self.currentPos.y-100/3)/100))))
         # must compare center tile
-        #print(str(endPos.x) + " " + str(endPos.y))
+        # print(str(endPos.x) + " " + str(endPos.y))
 
         if ((endPos.x - 50/3) < self.currentPos.x and (endPos.x + 50/3) > self.currentPos.x and (endPos.y - 50/3) < self.currentPos.y and (endPos.y + 50/3) > self.currentPos.y):
             self.objective = True
@@ -189,8 +261,38 @@ class AntModel:
             print("An ant has reached the end")
             self.writeToPath()
             self.checkBestPath()
-            AntModel.endFound = True
+            self.endFound = True
+            self.bestPathExists = True
+            self.destination = True
+            self.followedPath = AntModel.bestPath
+            # print("2" + 2)
             return True
+        #     if(AntModel.endFound == False):
+        #         AntModel.endFound = True
+        #     return True
+        else:
+            return False
+
+    def checkIfStart(self, startPos):
+        self.currentSegment = (m.floor(scale*((self.currentPos.x-100/3)/100)),
+                               (m.floor(scale*((self.currentPos.y-100/3)/100))))
+        # must compare center tile
+        # print(str(startPos.x) + " " + str(startPos.y))
+
+        if ((startPos.x - 50/3) < self.currentPos.x and (startPos.x + 50/3) > self.currentPos.x and (startPos.y - 50/3) < self.currentPos.y and (startPos.y + 50/3) > self.currentPos.y):
+            self.objective = True
+            self.path.time = time.time()
+            print("An ant has reached the start")
+            self.writeToPath()
+            self.checkBestPath()
+            self.startFound = True
+            self.destination = False
+            self.followedPath = AntModel.bestPath
+            # print("1" + 1)
+            return True
+        #     if(AntModel.endFound == False):
+        #         AntModel.endFound = True
+        #     return True
         else:
             return False
 

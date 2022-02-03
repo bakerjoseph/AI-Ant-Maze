@@ -23,7 +23,7 @@ generatedMaze.renderMaze()
 
 # print(len(allSectionsTiles[1]))
 
-antLimit = 2
+antLimit = 1
 antIteration = 0
 
 
@@ -32,7 +32,7 @@ while len(allAnts) < antLimit:
     startPos = Position(generatedMaze.startPosition().x + (random.random() * 30 - 15),
                         generatedMaze.startPosition().y + (random.random() * 30 - 15))
     posForAnt = startPos
-    antObj = AntModel(posForAnt, generatedMaze.endPosition(),
+    antObj = AntModel(posForAnt, generatedMaze.startPosition(), generatedMaze.endPosition(),
                       win, allTiles, sumOfSections)
     allAnts.append(antObj)
     print("ant created")
@@ -50,7 +50,7 @@ while True:
         allAnts[antIteration].update()
 
         # draw debug info
-        if(AntModel.endFound == True and first):
+        if(antObj.endFound == True and first):
             for point in AntModel.bestPath.posList:
                 c = Circle(Point(point.x, point.y), 2)
                 c.setFill('olive')
