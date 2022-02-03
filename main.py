@@ -43,7 +43,8 @@ print("ant creation finished")
 
 
 startTime = datetime.now()
-textTime = Text(Point((generatedMaze.lengthY*100)+200,90),time.strftime("%H:%M:%S",time.gmtime()))
+textTime = Text(Point((generatedMaze.lengthY*100)+200, 90),
+                time.strftime("%H:%M:%S", time.gmtime()))
 textTime.draw(win)
 
 
@@ -56,13 +57,16 @@ while True:
 
     # time.sleep(1000)
     if(stats == 0):
-        header = Text(Point((generatedMaze.lengthY*100)+200,50), "Simulation Stats")
+        header = Text(Point((generatedMaze.lengthY*100)+200, 50),
+                      "Simulation Stats")
         header.setStyle("bold")
         header.draw(win)
 
-        ants = Text(Point((generatedMaze.lengthY*100)+200,70), "Amount of Ants: " + str(antLimit))
+        ants = Text(Point((generatedMaze.lengthY*100)+200, 70),
+                    "Amount of Ants: " + str(antLimit))
         ants.draw(win)
-        bestTime = Text(Point((generatedMaze.lengthY*100)+200,110), "Best Time:"+ str(AntModel.bestPath.time))
+        bestTime = Text(Point((generatedMaze.lengthY*100)+200, 110),
+                        "End Found After: " + str(AntModel.bestPath.time))
         bestTime.draw(win)
 
         stats = 1
@@ -76,7 +80,7 @@ while True:
         # draw debug info
         if(AntModel.endFound == True and first):
             for point in AntModel.bestPath.posList:
-                bestTime.setText("Best Time:{}".format(endTime))
+                bestTime.setText("End Found After: {}".format(endTime))
                 c = Circle(Point(point.x, point.y), 2)
                 c.setFill('olive')
                 c.draw(win)
