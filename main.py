@@ -66,7 +66,7 @@ while True:
                     "Amount of Ants: " + str(antLimit))
         ants.draw(win)
         bestTime = Text(Point((generatedMaze.lengthY*100)+200, 110),
-                        "End Found After: " + str(AntModel.bestPath.time))
+                        "End Found After: 0.0")
         bestTime.draw(win)
 
         stats = 1
