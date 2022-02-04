@@ -9,8 +9,8 @@ from sqlite3 import Time
 # import random
 from maze import *
 
-display_path = True
-display_targets = True
+display_path = False
+display_targets = False
 
 class Path:
 
@@ -44,7 +44,7 @@ class AntModel:
         self.colliding = True
         self.rotation = 0.0
         self.currentPos = position
-        self.nodeDelay = 0.01
+        self.nodeDelay = 0.1
         self.nextNodeInsertTime = 0
         self.nextNode = 0
         self.rotationInfluence = 1
@@ -97,9 +97,10 @@ class AntModel:
             if(self.targetIndex != None):
                 # print("target index: " + str(self.targetIndex))
                 try:
-                    c = Circle(Point(self.followedPath.posList[self.targetIndex].x, self.followedPath.posList[self.targetIndex].y), 5)
-                    c.setFill('yellow')
-                    c.draw(self.win)
+                    if display_targets == True:
+                        c = Circle(Point(self.followedPath.posList[self.targetIndex].x, self.followedPath.posList[self.targetIndex].y), 5)
+                        c.setFill('yellow')
+                        c.draw(self.win)
                 except:
                     pass
                 # print(self.targetIndex)
@@ -114,7 +115,12 @@ class AntModel:
                 xdis = self.followedPath.posList[self.targetIndex].x - self.currentPos.x
                 ydis = self.followedPath.posList[self.targetIndex].y - self.currentPos.y
                 self.rotation = m.degrees(
-                    m.atan2(ydis, xdis)) + ((random.random() * 20) - 10)
+                    m.atan2(ydis, xdis))
+
+                if self.colliding:
+                    self.rotation += ((random.random() * 180) - 90)
+
+                # print(self.rotation)
             else:
                 self.setRandomRotation()
         else:
@@ -189,10 +195,12 @@ class AntModel:
         self.path.add_node(copy.deepcopy(self.currentPos))
 
     def checkBestPath(self):
-        if(self.bestPathExists == False):
+        if(self.bestPathExists == False and AntModel.bestPath == None):
             AntModel.bestPath = copy.deepcopy(self.path)
+            print("PATH NOW EXISTS")
         elif(len(AntModel.bestPath.posList) > len(self.path.posList)):
             AntModel.bestPath = copy.deepcopy(self.path)
+            print("NEW BEST PATH")
 
     def getNextNode(self):
 

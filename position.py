@@ -39,7 +39,8 @@ class Position:
         # print(str(posX) + " " + str(posY) + "\n" + str(tileRangeStart) + " " + str(tileRangeEnd))
         # time.sleep(2)
 
-        if (posX >= tileRangeStart[0] and posX <= tileRangeEnd[0] and posY >= tileRangeStart[1] and posY <= tileRangeEnd[1]):
+        cm = 2
+        if (posX >= tileRangeStart[0] - cm and posX <= tileRangeEnd[0] + cm and posY >= tileRangeStart[1] - cm and posY <= tileRangeEnd[1] + cm):
 
             # time.sleep(60)
             return True
