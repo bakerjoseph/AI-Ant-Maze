@@ -17,7 +17,7 @@ from graphics import *
 from position import *
 
 # Size Definition of the maze
-height = 1
+height = 2
 length = 2
 sumOfSections = height * length
 

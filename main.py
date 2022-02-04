@@ -23,7 +23,7 @@ generatedMaze.renderMaze()
 
 # print(len(allSectionsTiles[1]))
 
-antLimit = 1
+antLimit = 3
 antIteration = 0
 
 
@@ -58,7 +58,7 @@ while True:
             first = False
 
         antIteration += 1
-        time.sleep((0.02 / (antLimit*10)))
+        # time.sleep((0.002 / (antLimit*10)))
         # allAnts[antIteration - 1].currentPos.printPos()
 
     if antIteration >= antLimit:
